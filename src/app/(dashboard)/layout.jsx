@@ -1,8 +1,9 @@
-import Navbar from "@/Components/Navbar";
+
 import {  Inter } from "next/font/google";
 
 import "../globals.css";
 import { ToastContainer } from "react-toastify";
+import DashboardSidebar from "@/Components/Dashboard/DashboardSidebar";
 // (auth)/layout.js
 const sansBody = Inter({
   subsets: ["latin"],
@@ -13,7 +14,7 @@ const AuthLayout = ({ children }) => {
     <html lang="en"  className={`${sansBody.className}  h-full antialiased`}>
       <body  suppressHydrationWarning={true}>
         <div >
-            <Navbar/>
+         <DashboardSidebar/>
             <main className="container mx-auto bg-gray-50 ">
                   {children}
 

@@ -2,8 +2,8 @@ import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 
-const client = new MongoClient(process.env.MONGO_DB_URL);
-const db = client.db();
+const client = new MongoClient(process.env.MONGO_DB_URI);
+const db = client.db('online-ticket-booking-platform');
 
 export const auth = betterAuth({
   database: mongodbAdapter(db, {
@@ -13,6 +13,18 @@ export const auth = betterAuth({
 
 emailAndPassword: {
     enabled: true,
+    // autoSignIn: false //defaults to true
   },
+
+  user:{
+    additionalFields:{
+      role:{
+        default : "user"
+      },
+      isFraud: {
+        default: false
+      }
+    }
+  }
 
 });

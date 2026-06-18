@@ -1,6 +1,7 @@
 import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "../globals.css";
 import Navbar from "@/Components/Navbar";
+import { ToastContainer } from "react-toastify";
 
 const sansHeading = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -28,7 +29,7 @@ export default function RootLayout({ children }) {
         <main className="container mx-auto">
           {children}
         </main>
-
+ <ToastContainer position="top-center" />
 
       </body>
     </html>

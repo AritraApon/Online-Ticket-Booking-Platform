@@ -1,0 +1,306 @@
+"use client";
+
+import React, { useState } from "react";
+import { Form, TextField, Label, Input, FieldError, Button } from "@heroui/react";
+import { User, Mail, Lock, Upload, Briefcase, Eye, EyeOff, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
+import { redirect } from "next/navigation";
+
+export default function RegisterForm() {
+  const [role, setRole] = useState("user");
+  const [isVisible, setIsVisible] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+
+  const toggleVisibility = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsVisible(!isVisible);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+
+    try {
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setUploadedImageUrl(data.data.display_url);
+      } else {
+        toast.error("ImgBB Upload Failed.");
+      }
+    } catch (error) {
+      console.error("Cloud storage upload error:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    if (!uploadedImageUrl) {
+      toast.warn("Please wait for image upload to complete!");
+      return;
+    }
+
+    const payload = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      image: uploadedImageUrl,
+      role: role,
+      isFraud: false,
+      createdAt: new Date().toISOString()
+    };
+     const { data, error } = await authClient.signUp.email({
+        email: payload.email,
+        password: payload.password,
+        name:payload.name,
+        image: payload.image,
+        role: payload.role,
+        isFraud: payload.isFraud,
+        callbackURL: "/login" // A URL to redirect to after the user verifies their email (optional)
+    }
+);
+if(data){
+    toast.success('Successfully Register')
+    // toast.success('Successfully Registered! Redirecting... 🎉');
+
+  // 🚀 Simple dynamic layout refresh handler:
+  setTimeout(() => {
+    window.location.href = "/";
+    // router.push use na kore direct href selection runtime routing-ke internal cookies parsing check active korte baddho kore!
+  }, 1000);
+}
+if(error){
+    toast.error(error.message)
+}
+// console.log(data , error)
+
+    // alert(`Payload secure with Framer Motion hooks active: ${JSON.stringify(payload, null, 2)}`);
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] p-4 sm:p-6 lg:p-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden border border-zinc-100 min-h-[600px]">
+
+        {/* Left Column: Indigo Theme Display Panel */}
+        <div className="lg:col-span-5 bg-[#1E3A8A] p-8 lg:p-12 flex flex-col justify-between text-white relative overflow-hidden">
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-indigo-800 rounded-full blur-2xl opacity-40"></div>
+          <div className="absolute -bottom-10 -right-10 w-52 h-52 bg-[#FF6B35] rounded-full blur-3xl opacity-20"></div>
+
+          <div>
+            <h2 className="text-3xl font-extrabold tracking-tight">
+              Ticket<span className="text-[#FF6B35]">Bari</span>
+            </h2>
+            <p className="text-indigo-200 text-sm mt-2">Your Trusted Journey Companion</p>
+          </div>
+
+          <div className="my-8 lg:my-0 space-y-4">
+            <h3 className="text-2xl font-bold leading-snug">
+              Secure Your Seats <br />
+              In Few Quick Clicks!
+            </h3>
+            <p className="text-indigo-100 text-xs leading-relaxed max-w-xs">
+              Join thousands of daily travelers booking Bus, Train, Launch, and Flight tickets without any hassle.
+            </p>
+          </div>
+
+          <div className="text-xs text-indigo-300">
+            &copy; 2026 TicketBari. All rights reserved.
+          </div>
+        </div>
+
+        {/* Right Column: Account Form Container Area Layout */}
+        <div className="lg:col-span-7 p-8 lg:p-12 flex flex-col justify-center bg-white">
+          <div className="mb-6">
+            <h1 className="text-2xl font-extrabold text-zinc-900">Create Account</h1>
+            <p className="text-sm text-zinc-500 mt-1">Get started with your choice of platform role</p>
+          </div>
+
+          {/* Selector Segment Toggles */}
+          <div className="grid grid-cols-2 gap-3 p-1.5 bg-zinc-100 rounded-2xl mb-6">
+            <button
+              type="button"
+              onClick={() => setRole("user")}
+              className={`flex items-center justify-center space-x-2 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                role === "user" ? "bg-white text-[#1E3A8A] shadow-sm" : "text-zinc-600"
+              }`}
+            >
+              <User className="h-4 w-4" />
+              <span>Regular User</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole("vendor")}
+              className={`flex items-center justify-center space-x-2 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                role === "vendor" ? "bg-white text-[#1E3A8A] shadow-sm" : "text-zinc-600"
+              }`}
+            >
+              <Briefcase className="h-4 w-4" />
+              <span>Ticket Vendor</span>
+            </button>
+          </div>
+
+          {/* Form Native Wrapper Integration using Correct HeroUI Props Structure */}
+          <Form className="flex flex-col gap-4 w-full" onSubmit={handleRegisterSubmit}>
+
+            {/* Field 1: Name */}
+            <TextField isRequired name="name" type="text" className="flex flex-col gap-1 w-full">
+              <Label className="text-sm font-semibold text-zinc-700">Full Name</Label>
+              <div className="relative flex items-center">
+                <User className="absolute left-3 h-4 w-4 text-zinc-400 pointer-events-none" />
+                <Input
+                  placeholder="Enter your full name"
+                  className="w-full h-11 pl-10 pr-3 rounded-xl border border-zinc-200 focus:border-indigo-500 text-zinc-800 text-sm outline-none transition-colors"
+                />
+              </div>
+              <FieldError className="text-xs text-red-500 mt-0.5" />
+            </TextField>
+
+            {/* Field 2: Email */}
+            <TextField
+              isRequired
+              name="email"
+              type="email"
+              className="flex flex-col gap-1 w-full"
+              validate={(value) => {
+                if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+                  return "Please enter a valid email address";
+                }
+                return null;
+              }}
+            >
+              <Label className="text-sm font-semibold text-zinc-700">Email Address</Label>
+              <div className="relative flex items-center">
+                <Mail className="absolute left-3 h-4 w-4 text-zinc-400 pointer-events-none" />
+                <Input
+                  placeholder="you@example.com"
+                  className="w-full h-11 pl-10 pr-3 rounded-xl border border-zinc-200 focus:border-indigo-500 text-zinc-800 text-sm outline-none transition-colors"
+                />
+              </div>
+              <FieldError className="text-xs text-red-500 mt-0.5" />
+            </TextField>
+
+            {/* Field 3: Password */}
+            <TextField
+              isRequired
+              name="password"
+              type={isVisible ? "text" : "password"}
+              className="flex flex-col gap-1 w-full"
+              validate={(value) => {
+                if (value.length < 8) return "Password must be at least 8 characters";
+                if (!/[A-Z]/.test(value)) return "Include at least one uppercase letter";
+                if (!/[0-9]/.test(value)) return "Include at least one number";
+                return null;
+              }}
+            >
+              <Label className="text-sm font-semibold text-zinc-700">Password</Label>
+              <div className="relative flex items-center">
+                <Lock className="absolute left-3 h-4 w-4 text-zinc-400 pointer-events-none" />
+                <Input
+                  placeholder="Enter secure password"
+                  className="w-full h-11 pl-10 pr-10 rounded-xl border border-zinc-200 focus:border-indigo-500 text-zinc-800 text-sm outline-none transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={toggleVisibility}
+                  className="absolute right-3 p-1 rounded-full hover:bg-zinc-100 transition-colors focus:outline-none z-20"
+                >
+                  {isVisible ? <EyeOff className="h-4 w-4 text-zinc-400" /> : <Eye className="h-4 w-4 text-zinc-400" />}
+                </button>
+              </div>
+              <FieldError className="text-xs text-red-500 mt-0.5" />
+            </TextField>
+
+            {/* Cloud Upload Block */}
+            <div className="flex flex-col gap-1.5 w-full">
+              <label className="text-zinc-700 text-sm font-semibold">Profile Picture</label>
+              <div className="flex items-center space-x-4 border-2 border-dashed border-zinc-200 hover:border-indigo-400 rounded-xl p-3 bg-zinc-50 relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                  disabled={isUploading}
+                />
+                <div className="p-2 bg-white rounded-lg border border-zinc-100 shadow-sm">
+                  {isUploading ? (
+                    <Loader2 className="h-5 w-5 text-indigo-600 animate-spin" />
+                  ) : (
+                    <Upload className="h-5 w-5 text-zinc-500" />
+                  )}
+                </div>
+                <div className="flex-1 truncate">
+                  {isUploading ? (
+                    <span className="text-xs font-semibold text-indigo-600">Uploading to ImgBB...</span>
+                  ) : uploadedImageUrl ? (
+                    <span className="text-xs font-bold text-emerald-600 block">✓ Uploaded Successfully!</span>
+                  ) : (
+                    <span className="text-xs text-zinc-500 block">Click to browse photo</span>
+                  )}
+                </div>
+
+                {uploadedImageUrl && (
+                  <img
+                    src={uploadedImageUrl}
+                    alt="Preview avatar"
+                    className="w-10 h-10 rounded-full object-cover ring-2 ring-[#FF6B35] z-20"
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Submit & Navigation Link Block */}
+            <div className="flex flex-col gap-3 mt-2">
+              <Button
+                type="submit"
+                disabled={isUploading || !uploadedImageUrl}
+                className="w-full bg-[#FF6B35] disabled:bg-zinc-400 text-white font-bold h-11 rounded-xl shadow-md active:scale-[0.98] transition-all"
+              >
+                Register as {role === "user" ? "User" : "Vendor"}
+              </Button>
+
+              {/* ✨ Framer Motion Animated "Already have an account?" Text Wrapper */}
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.4 }}
+                className="text-xs text-center text-zinc-500 mt-2"
+              >
+                Already have an account?{" "}
+                <motion.span
+                  className="inline-block"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Link href="/login" className="text-[#1E3A8A] font-bold hover:underline">
+                    Sign In
+                  </Link>
+                </motion.span>
+              </motion.p>
+            </div>
+
+          </Form>
+        </div>
+      </div>
+    </div>
+  );
+}

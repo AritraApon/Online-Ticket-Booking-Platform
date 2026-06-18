@@ -2,33 +2,47 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, X, Train, LogOut, User, LayoutDashboard, Ticket } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Menu, X, Train, LogOut, User, Loader2 } from "lucide-react";
+import { authClient, useSession } from "@/lib/auth-client";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
-  // 📝 Mock Auth State - Better-Auth Integration shomoy real session database property diye update korbe
-  // Logic Testing er jonno toggle: true/false and role values: 'user' | 'vendor' | 'admin'
-  const session = {
-    user: {
-      name: "Aritro Mazumder",
-      email: "aritro@example.com",
-      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces",
-      role: "admin",
-    },
-    isLoggedIn: false,
+
+const { data: session , isPending} = authClient.useSession();
+const user = session?.user;
+console.log("🚀 ~ file: Navbar.jsx:40 ~ user:", user , session , isPending)
+
+  const defaultAvatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop";
+
+  const isActive = (path) => pathname === path;
+
+  // 🚀 Working Async Better-Auth Logout Configuration
+  const handleLogout = async () => {
+    try {
+      setIsDropdownOpen(false);
+      setIsOpen(false);
+
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/login");
+          },
+        },
+      });
+    } catch (err) {
+      console.error("Authentication execution failure:", err);
+    }
   };
 
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "All Tickets", path: "/all-tickets" },
   ];
-
-  // Dynamic active link checker wrapper
-  const isActive = (path) => pathname === path;
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-[#1E3A8A] text-white shadow-md border-b border-indigo-900/40">
@@ -63,8 +77,8 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {/* Dashboard Private Route - Only visible when user logged in */}
-            {session.isLoggedIn && (
+            {/* Dashboard Link - Rendered strictly if user exists */}
+            {!isPending && user && (
               <Link
                 href="/dashboard"
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -78,9 +92,13 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Right Side Control Section (Auth State Actions) */}
+          {/* Right Side Control Section (Dynamic User State Handling) */}
           <div className="hidden md:flex items-center space-x-4">
-            {session.isLoggedIn ? (
+            {isPending ? (
+              <div className="flex items-center justify-center w-8 h-8">
+                <Loader2 className="h-4 w-4 animate-spin text-indigo-300" />
+              </div>
+            ) : user ? (
               <div className="relative">
                 {/* Profile Trigger Element */}
                 <button
@@ -89,11 +107,15 @@ export default function Navbar() {
                 >
                   <img
                     className="h-8 w-8 rounded-full object-cover ring-2 ring-[#FF6B35]"
-                    src={session.user.image}
+                    src={user?.image || defaultAvatar}
                     alt="User Avatar"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = defaultAvatar;
+                    }}
                   />
                   <span className="text-sm font-medium text-indigo-50 max-w-[120px] truncate">
-                    {session.user.name}
+                    {user?.name || "User"}
                   </span>
                 </button>
 
@@ -102,9 +124,9 @@ export default function Navbar() {
                   <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-xl bg-white text-zinc-800 shadow-xl ring-1 ring-black/5 divide-y divide-zinc-100 focus:outline-none transition-all py-1">
                     <div className="px-4 py-2.5">
                       <p className="text-xs text-zinc-400 font-medium">Signed in as</p>
-                      <p className="text-sm font-semibold text-zinc-700 truncate">{session.user.email}</p>
+                      <p className="text-sm font-semibold text-zinc-700 truncate">{user?.email}</p>
                       <span className="inline-block mt-1 text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
-                        {session.user.role}
+                        {user?.role || "user"}
                       </span>
                     </div>
                     <div className="py-1">
@@ -119,10 +141,7 @@ export default function Navbar() {
                     </div>
                     <div className="py-1">
                       <button
-                        onClick={() => {
-                          setIsDropdownOpen(false);
-                          // Clear session context hooks / Better-Auth trigger handler executions
-                        }}
+                        onClick={handleLogout}
                         className="w-full flex items-center space-x-2.5 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 font-medium transition-colors text-left"
                       >
                         <LogOut className="h-4 w-4 text-red-500" />
@@ -181,7 +200,7 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {session.isLoggedIn && (
+          {!isPending && user && (
             <Link
               href="/dashboard"
               onClick={() => setIsOpen(false)}
@@ -198,13 +217,25 @@ export default function Navbar() {
           <hr className="border-indigo-900/40 my-2 mx-3" />
 
           {/* Mobile Session Actions Panel Box */}
-          {session.isLoggedIn ? (
+          {isPending ? (
+            <div className="flex justify-center py-2">
+              <Loader2 className="h-5 w-5 animate-spin text-indigo-300" />
+            </div>
+          ) : user ? (
             <div className="pt-2 px-3">
               <div className="flex items-center space-x-3 mb-3">
-                <img className="h-10 w-10 rounded-full object-cover ring-2 ring-[#FF6B35]" src={session.user.image} alt="User" />
+                <img
+                  className="h-10 w-10 rounded-full object-cover ring-2 ring-[#FF6B35]"
+                  src={user?.image || defaultAvatar}
+                  alt="User"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = defaultAvatar;
+                  }}
+                />
                 <div>
-                  <h4 className="text-sm font-bold text-white leading-tight">{session.user.name}</h4>
-                  <p className="text-xs text-indigo-200 truncate max-w-[200px]">{session.user.email}</p>
+                  <h4 className="text-sm font-bold text-white leading-tight">{user?.name || "User"}</h4>
+                  <p className="text-xs text-indigo-200 truncate max-w-[200px]">{user?.email}</p>
                 </div>
               </div>
               <div className="space-y-1">
@@ -217,10 +248,7 @@ export default function Navbar() {
                   <span>My Profile</span>
                 </Link>
                 <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    // Logout execution blocks
-                  }}
+                  onClick={handleLogout}
                   className="flex items-center space-x-2.5 w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-red-950/20 rounded-lg transition-colors font-medium"
                 >
                   <LogOut className="h-4 w-4" />
