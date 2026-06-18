@@ -19,7 +19,7 @@ export default function Navbar() {
       image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces",
       role: "admin",
     },
-    isLoggedIn: true,
+    isLoggedIn: false,
   };
 
   const navLinks = [
