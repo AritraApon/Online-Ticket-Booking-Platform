@@ -17,7 +17,7 @@ const { data: session , isPending} = authClient.useSession();
 const user = session?.user;
 console.log("🚀 ~ file: Navbar.jsx:40 ~ user:", user , session , isPending)
 
-  const defaultAvatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop";
+  const defaultAvatar = "https://i.ibb.co.com/S4p625c4/image.png";
 
   const isActive = (path) => pathname === path;
 
@@ -78,18 +78,24 @@ console.log("🚀 ~ file: Navbar.jsx:40 ~ user:", user , session , isPending)
             ))}
 
             {/* Dashboard Link - Rendered strictly if user exists */}
-            {!isPending && user && (
-              <Link
-                href="/dashboard"
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  pathname.startsWith("/dashboard")
-                    ? "bg-indigo-900/50 text-[#FF6B35] font-semibold"
-                    : "text-indigo-100 hover:bg-indigo-900/30 hover:text-white"
-                }`}
-              >
-                Dashboard
-              </Link>
-            )}
+        {!isPending && user && (
+  <Link
+    href={
+      user.role === "admin"
+        ? "/dashboard/admin"
+        : user.role === "vendor"
+        ? "/dashboard/vendor"
+        : "/dashboard/user" // Default fallback jodi regular user hoy
+    }
+    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+      pathname.startsWith("/dashboard")
+        ? "bg-indigo-900/50 text-[#FF6B35] font-semibold"
+        : "text-indigo-100 hover:bg-indigo-900/30 hover:text-white"
+    }`}
+  >
+    Dashboard
+  </Link>
+)}
           </div>
 
           {/* Right Side Control Section (Dynamic User State Handling) */}

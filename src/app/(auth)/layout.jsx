@@ -16,7 +16,6 @@ const AuthLayout = ({ children }) => {
             <Navbar/>
             <main className="container mx-auto bg-gray-50 ">
                   {children}
-
                 </main>
                 <ToastContainer position="top-center" />
 

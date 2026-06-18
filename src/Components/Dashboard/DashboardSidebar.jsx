@@ -38,22 +38,22 @@ export default function DashboardSidebar() {
   // 📝 Dynamic Role Matrix Mapping Array configurations
   const roleRoutes = {
     user: [
-      { name: "User Profile", path: "/dashboard/profile", icon: User },
-      { name: "My Booked Tickets", path: "/dashboard/booked-tickets", icon: Ticket },
-      { name: "Transaction History", path: "/dashboard/transactions", icon: History },
+      { name: "User Profile", path: "/dashboard/user/profile", icon: User },
+      { name: "My Booked Tickets", path: "/dashboard/user/booked-tickets", icon: Ticket },
+      { name: "Transaction History", path: "/dashboard/user/transactions", icon: History },
     ],
     vendor: [
-      { name: "Vendor Profile", path: "/dashboard/vendor-profile", icon: User },
-      { name: "Add Ticket", path: "/dashboard/add-ticket", icon: PlusCircle },
-      { name: "My Added Tickets", path: "/dashboard/my-tickets", icon: Layers },
-      { name: "Requested Bookings", path: "/dashboard/bookings", icon: FolderCheck },
-      { name: "Revenue Overview", path: "/dashboard/revenue", icon: DollarSign },
+      { name: "Vendor Profile", path: "/dashboard/vendor/vendor-profile", icon: User },
+      { name: "Add Ticket", path: "/dashboard/vendor/add-ticket", icon: PlusCircle },
+      { name: "My Added Tickets", path: "/dashboard/vendor/my-tickets", icon: Layers },
+      { name: "Requested Bookings", path: "/dashboard/vendor/bookings", icon: FolderCheck },
+      { name: "Revenue Overview", path: "/dashboard/vendor/revenue", icon: DollarSign },
     ],
     admin: [
-      { name: "Admin Profile", path: "/dashboard/admin-profile", icon: User },
-      { name: "Manage Tickets", path: "/dashboard/manage-tickets", icon: ShieldAlert },
-      { name: "Manage Users", path: "/dashboard/manage-users", icon: Users },
-      { name: "Advertise Tickets", path: "/dashboard/advertise", icon: Megaphone },
+      { name: "Admin Profile", path: "/dashboard/admin/admin-profile", icon: User },
+      { name: "Manage Tickets", path: "/dashboard/admin/manage-tickets", icon: ShieldAlert },
+      { name: "Manage Users", path: "/dashboard/admin/manage-users", icon: Users },
+      { name: "Advertise Tickets", path: "/dashboard/admin/advertise", icon: Megaphone },
     ]
   };
 
@@ -108,7 +108,7 @@ export default function DashboardSidebar() {
           {/* User Meta Identity Badge Context Group */}
           <div className="px-4 py-4 border-b border-indigo-900/30 bg-indigo-900/20">
             <div className="flex items-center space-x-3">
-              <div className="h-9 w-9 rounded-full bg-[#FF6B35] flex items-center justify-center font-bold text-sm text-white border border-orange-400/30 uppercase">
+              <div className="h-9 w-9 rounded-full bg-[#6435ff] flex items-center justify-center font-bold text-sm text-white border border-orange-400/30 uppercase">
                 {user?.name ? user.name.slice(0, 2) : "US"}
               </div>
               <div className="truncate">
@@ -144,6 +144,7 @@ export default function DashboardSidebar() {
             })}
           </nav>
         </div>
+
 
         {/* Bottom Section Block: Global Signout Control Core Anchor */}
         <div className="p-4 border-t border-indigo-900/30 bg-indigo-950/20">
