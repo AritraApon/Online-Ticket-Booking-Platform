@@ -1,10 +1,10 @@
-import ProfilePage from '@/Components/ProfilePage';
+import ProfilePage from '@/Components/Profile/ProfilePage';
 import React from 'react';
 
 const VendorProfilePage = () => {
     return (
         <div>
-            <ProfilePage/>
+            <ProfilePage />
         </div>
     );
 };

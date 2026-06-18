@@ -6,6 +6,7 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
 
 export default function LogInForm() {
   const [isVisible, setIsVisible] = useState(false);

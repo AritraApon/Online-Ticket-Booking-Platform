@@ -137,7 +137,7 @@ console.log("🚀 ~ file: Navbar.jsx:40 ~ user:", user , session , isPending)
                     </div>
                     <div className="py-1">
                       <Link
-                        href="/dashboard/profile"
+                        href="/profile"
                         onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center space-x-2.5 px-4 py-2.5 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
                       >
@@ -246,7 +246,7 @@ console.log("🚀 ~ file: Navbar.jsx:40 ~ user:", user , session , isPending)
               </div>
               <div className="space-y-1">
                 <Link
-                  href="/dashboard/profile"
+                  href="/profile"
                   onClick={() => setIsOpen(false)}
                   className="flex items-center space-x-2.5 w-full text-left px-3 py-2 text-sm text-indigo-100 hover:bg-indigo-900/40 rounded-lg transition-colors"
                 >

@@ -1,10 +1,10 @@
-import ProfilePage from '@/Components/ProfilePage';
+import ProfilePage from '@/Components/Profile/ProfilePage';
 import React from 'react';
 
 const AdminProfile = () => {
     return (
         <div>
-    <ProfilePage/>
+            <ProfilePage />
         </div>
     );
 };
