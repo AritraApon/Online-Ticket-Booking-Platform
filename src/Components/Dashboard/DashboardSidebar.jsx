@@ -7,7 +7,7 @@ import { authClient } from "@/lib/auth-client";
 import {
   User, Ticket, History, PlusCircle,
   Layers, FolderCheck, DollarSign, ShieldAlert,
-  Users, Megaphone, LogOut, Menu, X, Train
+  Users, Megaphone, LogOut, Menu, X, Train ,LucideHome
 } from "lucide-react";
 
 export default function DashboardSidebar() {
@@ -38,11 +38,13 @@ export default function DashboardSidebar() {
   // 📝 Dynamic Role Matrix Mapping Array configurations
   const roleRoutes = {
     user: [
+      { name: "Overview", path: "/dashboard/user", icon: LucideHome },
       { name: "User Profile", path: "/dashboard/user/profile", icon: User },
       { name: "My Booked Tickets", path: "/dashboard/user/booked-tickets", icon: Ticket },
       { name: "Transaction History", path: "/dashboard/user/transactions", icon: History },
     ],
     vendor: [
+        { name: "Overview", path: "/dashboard/vendor", icon: LucideHome },
       { name: "Vendor Profile", path: "/dashboard/vendor/vendor-profile", icon: User },
       { name: "Add Ticket", path: "/dashboard/vendor/add-ticket", icon: PlusCircle },
       { name: "My Added Tickets", path: "/dashboard/vendor/my-tickets", icon: Layers },
@@ -50,6 +52,7 @@ export default function DashboardSidebar() {
       { name: "Revenue Overview", path: "/dashboard/vendor/revenue", icon: DollarSign },
     ],
     admin: [
+      { name: "Overview", path: "/dashboard/admin", icon: LucideHome },
       { name: "Admin Profile", path: "/dashboard/admin/admin-profile", icon: User },
       { name: "Manage Tickets", path: "/dashboard/admin/manage-tickets", icon: ShieldAlert },
       { name: "Manage Users", path: "/dashboard/admin/manage-users", icon: Users },
