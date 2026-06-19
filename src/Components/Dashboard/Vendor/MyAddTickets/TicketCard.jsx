@@ -38,11 +38,9 @@ export default function TicketCard({ ticket, onUpdate, onDelete, index }) {
     if (!dateTimeString) return "N/A";
     const dateObj = new Date(dateTimeString);
 
-    // Formatting options e.g., "22 Jun 2026"
     const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
     const formattedDate = dateObj.toLocaleDateString('en-US', dateOptions);
 
-    // Formatting time e.g., "03:45 PM"
     const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
     const formattedTime = dateObj.toLocaleTimeString('en-US', timeOptions);
 
@@ -50,6 +48,8 @@ export default function TicketCard({ ticket, onUpdate, onDelete, index }) {
   };
 
   const departureInfo = formatDeparture(ticket.departureDateTime);
+
+  // ⚡ ONLY ONE DECLARATION HERE (Double declaration fixed)
   const isRejected = ticket.verificationStatus === "rejected";
 
   const statusColors = {
@@ -109,7 +109,7 @@ export default function TicketCard({ ticket, onUpdate, onDelete, index }) {
             <span className="text-[#1E3A8A] dark:text-blue-400 font-extrabold">{ticket.to}</span>
           </div>
 
-          {/* New Field: Departure Date & Time Showcase */}
+          {/* Departure Date & Time Showcase */}
           <div className="flex items-center justify-between gap-2 p-3 bg-[#1E3A8A]/5 dark:bg-blue-500/5 border border-[#1E3A8A]/10 dark:border-blue-500/10 rounded-xl">
             <div className="flex items-center gap-2 text-xs font-bold text-zinc-700 dark:text-zinc-300">
               <svg className="h-4 w-4 text-[#1E3A8A] dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -122,7 +122,7 @@ export default function TicketCard({ ticket, onUpdate, onDelete, index }) {
             </div>
           </div>
 
-          {/* New Field: Dynamic Perks Section */}
+          {/* Dynamic Perks Section */}
           {ticket.perks && ticket.perks.length > 0 && (
             <div className="space-y-1.5">
               <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-extrabold uppercase tracking-wider">Included Perks</p>
@@ -153,25 +153,21 @@ export default function TicketCard({ ticket, onUpdate, onDelete, index }) {
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Action Buttons Area with clean conditional render toggle */}
         <div className="flex items-center gap-3 pt-1">
-                {/* <Link
-                 href={`/dashboard/vendor/my-tickets/update-ticket-info`}
-
-                    className="flex-1 py-3 rounded-xl text-xs font-black tracking-wider uppercase border-2 border-[#1E3A8A] hover:bg-[#1E3A8A] text-[#1E3A8A] hover:text-white dark:border-blue-500 dark:text-blue-400 dark:hover:bg-blue-600 dark:hover:text-white active:scale-95 transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed"
-                >
-                    Update Details
-                </Link> */}
-                <UpdateTicketButton ticket={ticket}/>
-
-          <DeleteButton ticket={ticket} />
-          {/* <button
-            onClick={() => onDelete(ticket._id)}
-            disabled={isRejected}
-            className="flex-1 py-3 rounded-xl text-xs font-black tracking-wider uppercase bg-rose-600 hover:bg-rose-700 text-white shadow-md shadow-rose-600/10 active:scale-95 transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed"
-          >
-            Delete Asset
-          </button> */}
+          {isRejected ? (
+            <div className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-black tracking-wide uppercase border border-rose-500/20 bg-rose-500/5 text-rose-500 dark:bg-rose-500/10">
+              <svg className="h-4 w-4 text-rose-500 shrink-0 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <span>Your ticket is rejected</span>
+            </div>
+          ) : (
+            <>
+              <UpdateTicketButton ticket={ticket} />
+              <DeleteButton ticket={ticket} />
+            </>
+          )}
         </div>
 
       </div>

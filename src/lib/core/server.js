@@ -36,6 +36,7 @@ export const deleteMutation = async (url) => {
 
     const res = await fetch(`${baseUrl}${url}`, {
         method: "DELETE",
+        cache: "no-store",
     });
 
     return await res.json();
@@ -49,9 +50,19 @@ export const patchMutation = async(url ,data)=>{
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
+
         },
         body: JSON.stringify(data),
+         cache: "no-store",
     });
 
     return await res.json();
 }
+
+
+export const getMutation = async (url) => {
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
+   const res = await fetch(`${baseUrl}${url}`,{
+       cache: "no-store",});
+   return await res.json();
+};
