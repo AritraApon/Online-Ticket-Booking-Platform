@@ -8,6 +8,7 @@ import {
   Layers, Calendar, Sparkles, Image as ImageIcon,
   User, Mail, Loader2, UploadCloud, CheckCircle2
 } from "lucide-react";
+import { addTicket } from "@/lib/actions/tickets";
 
 export default function AddTicketForm() {
   const { data: session, isPending: isAuthPending } = authClient.useSession();
@@ -85,6 +86,7 @@ export default function AddTicketForm() {
     );
   };
 
+  // submit form handler server side call
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -111,22 +113,34 @@ export default function AddTicketForm() {
       createdAt: new Date().toISOString(),
     };
 
-    console.log("Final Compiled payload for MongoDB:", finalTicketPayload);
-    toast.success("Ticket data compiled perfectly! Check Console.");
+    // console.log("Final Compiled payload for MongoDB:", finalTicketPayload);
+    // toast.success("Ticket data compiled perfectly! Check Console.");
+
+    //mongodb post : add ticket
+    const data = await addTicket(finalTicketPayload);
+    console.log(data);
+
+    if (data.insertedId) {
+      toast.success("Successfully added a new ticket!");
+
+      setFormData({
+        title: "",
+        from: "",
+        to: "",
+        transportType: "bus", // default fallback state-e firbe
+        pricePerUnit: "",
+        quantity: "",
+        departureDateTime: "",
+      });
+      setSelectedPerks([]); // Selected perks array empty hobe
+      setImageUrl("");
+        // Image link block string empty hobe
+    } else {
+      toast.error("Failed to add a new ticket!");
+    }
 
 
 
-    setFormData({
-      title: "",
-      from: "",
-      to: "",
-      transportType: "bus", // default fallback state-e firbe
-      pricePerUnit: "",
-      quantity: "",
-      departureDateTime: "",
-    });
-    setSelectedPerks([]); // Selected perks array empty hobe
-    setImageUrl("");      // Image link block string empty hobe
   };
 
   if (isAuthPending) {
@@ -235,10 +249,10 @@ export default function AddTicketForm() {
                   onChange={handleInputChange}
                   className="w-full pl-11 pr-4 py-3 text-sm font-semibold rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20 focus:border-[#1E3A8A] appearance-none"
                 >
-                  <option value="bus">Bus / Coach</option>
-                  <option value="train">Train / Intercity Express</option>
-                  <option value="launch">Launch / Cruise Ship</option>
-                  <option value="plane">Plane / Flight Airways</option>
+                  <option value="bus">Bus </option>
+                  <option value="train">Train </option>
+                  <option value="launch">Launch </option>
+                  <option value="plane">Plane </option>
                 </select>
               </div>
             </div>
@@ -309,11 +323,10 @@ export default function AddTicketForm() {
             {perkOptions.map((perk) => (
               <label
                 key={perk.id}
-                className={`flex items-center space-x-3 p-4 rounded-xl border cursor-pointer select-none transition-all duration-200 ${
-                  selectedPerks.includes(perk.id)
+                className={`flex items-center space-x-3 p-4 rounded-xl border cursor-pointer select-none transition-all duration-200 ${selectedPerks.includes(perk.id)
                     ? "border-[#FF6B35] bg-orange-50/40 dark:bg-orange-500/5 text-[#FF6B35] font-bold shadow-sm"
                     : "border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-950 text-zinc-600 dark:text-zinc-400 font-medium"
-                }`}
+                  }`}
               >
                 <input
                   type="checkbox"
@@ -321,11 +334,10 @@ export default function AddTicketForm() {
                   onChange={() => handlePerkToggle(perk.id)}
                   className="hidden"
                 />
-                <div className={`h-5 w-5 rounded-md border flex items-center justify-center transition-all ${
-                  selectedPerks.includes(perk.id)
+                <div className={`h-5 w-5 rounded-md border flex items-center justify-center transition-all ${selectedPerks.includes(perk.id)
                     ? "bg-[#FF6B35] border-[#FF6B35] text-white"
                     : "border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900"
-                }`}>
+                  }`}>
                   {selectedPerks.includes(perk.id) && <span className="text-[10px]">✓</span>}
                 </div>
                 <span className="text-sm">{perk.label}</span>

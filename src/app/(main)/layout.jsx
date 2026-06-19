@@ -1,40 +1,18 @@
-import { Plus_Jakarta_Sans, Inter } from "next/font/google";
-import "../globals.css";
-import Navbar from "@/Components/Navbar";
-import { ToastContainer } from "react-toastify";
-import Footer from "@/Components/Footer";
+import Footer from '@/Components/Footer';
+import Navbar from '@/Components/Navbar';
+import React from 'react';
+import { ToastContainer } from 'react-toastify';
 
-const sansHeading = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-heading",
-});
-
-const sansBody = Inter({
-  subsets: ["latin"],
-  variable: "--font-body",
-});
-
-export const metadata = {
-  title: "TicketBari",
-  description: "Online ticket booking platform",
-};
-
-export default function RootLayout({ children }) {
-  return (
-    <html
-      lang="en"
-      className={`${sansBody.className}  h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning={true}>
-         <Navbar/>
-        <main className="container mx-auto">
-          {children}
-        </main>
+const MainLayout = ({children}) => {
+    return (
+        <div>
+            <Navbar/>
+        <main>{children}</main>
         <Footer/>
 
- <ToastContainer position="top-center" />
+        <ToastContainer position="top-center" />
+        </div>
+    );
+};
 
-      </body>
-    </html>
-  );
-}
+export default MainLayout;
