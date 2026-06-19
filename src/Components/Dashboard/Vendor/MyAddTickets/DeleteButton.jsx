@@ -37,7 +37,7 @@ const DeleteButton = ({ ticket }) => {
                 </Button>
                 <AlertDialog.Backdrop>
                     <AlertDialog.Container>
-                        <AlertDialog.Dialog className="sm:max-w-[400px]">
+                        <AlertDialog.Dialog className="sm:max-w-100">
                             <AlertDialog.CloseTrigger />
                             <AlertDialog.Header>
                                 <AlertDialog.Icon status="danger" />
@@ -45,7 +45,7 @@ const DeleteButton = ({ ticket }) => {
                             </AlertDialog.Header>
                             <AlertDialog.Body>
                                 <p>
-                                    This will permanently delete <strong> "{ticket?.title || 'this ticket'} "</strong> from your
+                                    This will permanently delete <strong> {ticket?.title || 'this ticket'} </strong> from your
                                     TicketBari terminal listing. This operational action cannot be undone.
                                 </p>
                             </AlertDialog.Body>

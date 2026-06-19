@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import DeleteButton from './DeleteButton';
+import Link from 'next/link';
+import UpdateTicketButton from './UpdateTicketButton';
 
 export default function TicketCard({ ticket, onUpdate, onDelete, index }) {
   const [timeLeft, setTimeLeft] = useState("");
@@ -153,13 +155,15 @@ export default function TicketCard({ ticket, onUpdate, onDelete, index }) {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-3 pt-1">
-          <button
-            onClick={() => onUpdate(ticket._id)}
-            disabled={isRejected}
-            className="flex-1 py-3 rounded-xl text-xs font-black tracking-wider uppercase border-2 border-[#1E3A8A] hover:bg-[#1E3A8A] text-[#1E3A8A] hover:text-white dark:border-blue-500 dark:text-blue-400 dark:hover:bg-blue-600 dark:hover:text-white active:scale-95 transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed"
-          >
-            Update Details
-          </button>
+                {/* <Link
+                 href={`/dashboard/vendor/my-tickets/update-ticket-info`}
+
+                    className="flex-1 py-3 rounded-xl text-xs font-black tracking-wider uppercase border-2 border-[#1E3A8A] hover:bg-[#1E3A8A] text-[#1E3A8A] hover:text-white dark:border-blue-500 dark:text-blue-400 dark:hover:bg-blue-600 dark:hover:text-white active:scale-95 transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed"
+                >
+                    Update Details
+                </Link> */}
+                <UpdateTicketButton ticket={ticket}/>
+
           <DeleteButton ticket={ticket} />
           {/* <button
             onClick={() => onDelete(ticket._id)}

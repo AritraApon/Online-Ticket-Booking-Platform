@@ -40,3 +40,18 @@ export const deleteMutation = async (url) => {
 
     return await res.json();
 };
+
+//----------------patch Mutation Handler: ----------------------------
+export const patchMutation = async(url ,data)=>{
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
+
+    const res = await fetch(`${baseUrl}${url}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+
+    return await res.json();
+}
