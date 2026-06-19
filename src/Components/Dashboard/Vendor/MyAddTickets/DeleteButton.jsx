@@ -1,19 +1,26 @@
 'use client';
 import { deleteTicket } from "@/lib/actions/ticketDelete";
 import { AlertDialog, Button } from "@heroui/react";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 // 💡 Props হিসেবে { ticket } কে ডি-স্ট্রাকচার করা হলো টেক্সট ডাইনামিক করার জন্য
-const DeleteButton =  ({ ticket }) => {
-        const ticketId = ticket?._id;
-   const handleDelete = async (id) => {
+const DeleteButton = ({ ticket }) => {
+    const router = useRouter();
+    const ticketId = ticket?._id;
+    const handleDelete = async (id) => {
         if (!id) return alert("Ticket ID not found!");
 
         try {
             const data = await deleteTicket(id);
             // MongoDB delete database response payload structure checks 'deletedCount'
-            if(data && data.deletedCount > 0) {
-                window.location.reload();
+            if (data && data.deletedCount > 0) {
+                toast.success("Ticket deleted successfully!");
+
+                setTimeout(() => {
+                    router.refresh();
+                }, 700);
+
             } else {
                 toast.error("Failed to delete from database. Record might be missing.");
             }

@@ -1,5 +1,6 @@
 'use server';
 
+//----------------Post Mutation Handler: ----------------------------
 export const postMutation = async (url, data) => {
     // Server layer code directly local process variables search
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
@@ -26,4 +27,16 @@ export const postMutation = async (url, data) => {
         console.error("🛑 Connectivity issue connecting database port pipeline:", err);
         return { error: true, message: "Server connection failed!" };
     }
+};
+
+//----------------Delete Mutation Handler: ----------------------------
+
+export const deleteMutation = async (url) => {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
+
+    const res = await fetch(`${baseUrl}${url}`, {
+        method: "DELETE",
+    });
+
+    return await res.json();
 };
