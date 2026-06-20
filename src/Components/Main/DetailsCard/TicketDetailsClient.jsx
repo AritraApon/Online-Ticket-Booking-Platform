@@ -2,15 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Clock, ArrowRight, ShieldCheck, MapPin, Sparkles, AlertTriangle, ArrowLeft } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, ShieldCheck, MapPin, Sparkles, AlertTriangle, ArrowLeft, Lock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import BookingModal from './BookingModal';
+import { authClient } from '@/lib/auth-client';
+
+// 💡 NOTE: এখানে উদাহরণ হিসেবে hardcoded ডামি ইউজার অবজেক্ট দেওয়া হয়েছে।
+// তুই তোর প্রজেক্টের আসল Auth স্টেট (যেমন: `const { user } = useAuth();`) দিয়ে এটা রিপ্লেস করে নিবি।
+// const loggedInUser = {
+//   email: "passenger@example.com",
+//   role: "user" // টেস্ট করার জন্য এখানে 'vendor', 'admin', বা 'user' চেঞ্জ করে দেখতে পারিস
+// };
 
 export default function TicketDetailsClient({ ticket }) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ passed: false, text: "Calculating..." });
 
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
+const loggedInUser = user?.role || "user";
   // Real-time Countdown Engine
   useEffect(() => {
     const calculateTime = () => {
@@ -44,7 +55,13 @@ export default function TicketDetailsClient({ ticket }) {
 
   const isExpired = timeLeft.passed;
   const isOutOfStock = (ticket.quantity || 0) <= 0;
-  const isBookingDisabled = isExpired || isOutOfStock;
+
+  // ⚡ Role-Based Check Constraints
+  const isPassenger = loggedInUser && loggedInUser.role === 'user';
+  const isStaffOrVendor = loggedInUser && (loggedInUser.role === 'vendor' || loggedInUser.role === 'admin');
+
+  // বাটন ডিজেবল হবে যদি টিকিট এক্সপায়ার্ড হয়, স্টক না থাকে, অথবা ইউজার যদি জেনারেল প্যাসেঞ্জার ('user') না হয়
+  const isBookingDisabled = isExpired || isOutOfStock || !isPassenger;
 
   return (
     <div className="space-y-6 text-left selection:bg-[#FF6B35]/20">
@@ -66,10 +83,10 @@ export default function TicketDetailsClient({ ticket }) {
       {/* Main Structural Balanced Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-        {/* LEFT COLUMN: Media + Action Deck (Narrow & Compact) */}
+        {/* LEFT COLUMN: Media + Action Deck */}
         <div className="lg:col-span-5 space-y-6">
 
-          {/* Smaller, Trimmed Image Card */}
+          {/* Image Card */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -87,7 +104,7 @@ export default function TicketDetailsClient({ ticket }) {
             </div>
           </motion.div>
 
-          {/* Compact, Ultra-Sharp Booking Action Card (No Empty Space) */}
+          {/* Booking Action Card */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -101,7 +118,7 @@ export default function TicketDetailsClient({ ticket }) {
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </div>
 
-            {/* Compact Countdown Box */}
+            {/* Countdown Box */}
             <div className={`p-4 rounded-xl border transition-all text-center ${
               isExpired
                 ? "bg-red-50 border-red-200 text-red-600"
@@ -129,11 +146,30 @@ export default function TicketDetailsClient({ ticket }) {
               </div>
             </div>
 
-            {/* Guard Info Messages */}
-            {isBookingDisabled && (
+            {/* 🛑 DYNAMIC WARNING MESSAGES HUG */}
+            {/* ১. সময় বা স্টক শেষ হলে ওয়ার্নিং */}
+            {(isExpired || isOutOfStock) && (
               <div className="flex items-center space-x-2 text-[11px] font-bold text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200/60">
                 <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                 <span>{isExpired ? "Departure schedule has passed." : "Sold out!"}</span>
+              </div>
+            )}
+
+            {/* ২. ইউজার যদি ভেন্ডর বা এডমিন হয় তাহলে রেস্ট্রিকশন নোটিশ */}
+            {isStaffOrVendor && !(isExpired || isOutOfStock) && (
+              <div className="flex items-start space-x-2 text-[11px] font-bold text-amber-700 bg-amber-50 p-2.5 rounded-xl border border-amber-200/60">
+                <Lock className="h-3.5 w-3.5 shrink-0 mt-0.5 text-amber-600" />
+                <span>
+                  Booking restricted! Admins and Vendors are not permitted to reserve passenger tickets.
+                </span>
+              </div>
+            )}
+
+            {/* ৩. কোনো ইউজার যদি লগইন অবস্থায় না থাকে তার জন্য নোটিশ */}
+            {!loggedInUser && (
+              <div className="flex items-center space-x-2 text-[11px] font-bold text-zinc-500 bg-zinc-50 p-2.5 rounded-xl border border-zinc-200">
+                <Lock className="h-3.5 w-3.5 shrink-0" />
+                <span>Please log in as a passenger to purchase tickets.</span>
               </div>
             )}
 
@@ -146,13 +182,15 @@ export default function TicketDetailsClient({ ticket }) {
               className="w-full flex items-center justify-center space-x-2 py-3.5 bg-[#1E3A8A] text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm hover:bg-[#122554] disabled:opacity-20 disabled:cursor-not-allowed"
             >
               <ShieldCheck className="h-4 w-4 text-[#FF6B35]" />
-              <span>Book This Ticket</span>
+              <span>
+                {isStaffOrVendor ? "Restricted for Management" : "Book This Ticket"}
+              </span>
             </motion.button>
           </motion.div>
 
         </div>
 
-        {/* RIGHT COLUMN: Full Specifications Display Card (Wide & Beautiful) */}
+        {/* RIGHT COLUMN: Full Specifications Display Card */}
         <motion.div
           initial={{ opacity: 0, x: 15 }}
           animate={{ opacity: 1, x: 0 }}

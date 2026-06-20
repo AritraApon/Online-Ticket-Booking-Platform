@@ -6,9 +6,11 @@ import { X, ShoppingBag, AlertCircle, CheckCircle2, Plus, Minus } from 'lucide-r
 import { authClient } from '@/lib/auth-client';
 import { bookingTicket } from '@/lib/actions/bookingTickets';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 
 export default function BookingModal({ ticket, onClose }) {
+  const router = useRouter();
   // 🔐 Better-Auth Session Mock/Simulation Block (Real dynamic production auth value placeholder)
   // Integrates with session payload data maps seamlessly
 const { data: session } =authClient.useSession();
@@ -89,19 +91,22 @@ const user = session?.user;
     // console.log(bookingPayload);
     // console.log("======================================");
 
-    const data = await bookingTicket(bookingPayload);
+
+
+    try {
+
+       const data = await bookingTicket(bookingPayload);
 
     if(data.insertedID){
       toast.success('Ticket booking request has been successfully submitted.');
     }
-
-    try {
       // Simulate post network delay line framework layer
       await new Promise(resolve => setTimeout(resolve, 1400));
 
       setSuccess(true);
       setTimeout(() => {
         onClose();
+        router.push('/dashboard/user/booked-tickets');
       }, 1800);
 
     } catch (err) {
