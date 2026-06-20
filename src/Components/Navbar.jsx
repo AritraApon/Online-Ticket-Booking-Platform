@@ -15,7 +15,7 @@ export default function Navbar() {
 
 const { data: session , isPending} = authClient.useSession();
 const user = session?.user;
-console.log("🚀 ~ file: Navbar.jsx:40 ~ user:", user , session , isPending)
+// console.log("🚀 ~ file: Navbar.jsx:40 ~ user:", user , session , isPending)
 
   const defaultAvatar = "https://i.ibb.co.com/S4p625c4/image.png";
 
