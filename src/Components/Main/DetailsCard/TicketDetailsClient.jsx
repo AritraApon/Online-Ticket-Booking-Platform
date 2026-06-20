@@ -7,21 +7,15 @@ import { useRouter } from 'next/navigation';
 import BookingModal from './BookingModal';
 import { authClient } from '@/lib/auth-client';
 
-// 💡 NOTE: এখানে উদাহরণ হিসেবে hardcoded ডামি ইউজার অবজেক্ট দেওয়া হয়েছে।
-// তুই তোর প্রজেক্টের আসল Auth স্টেট (যেমন: `const { user } = useAuth();`) দিয়ে এটা রিপ্লেস করে নিবি।
-// const loggedInUser = {
-//   email: "passenger@example.com",
-//   role: "user" // টেস্ট করার জন্য এখানে 'vendor', 'admin', বা 'user' চেঞ্জ করে দেখতে পারিস
-// };
-
 export default function TicketDetailsClient({ ticket }) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ passed: false, text: "Calculating..." });
 
+  // 🔐 সেশন ও ইউজার ডেটা ফেচিং
   const { data: session } = authClient.useSession();
-  const user = session?.user;
-const loggedInUser = user?.role || "user";
+  const user = session?.user; // এটি সরাসরি ইউজার অবজেক্ট দিবে (যার মধ্যে id, email, role থাকবে)
+
   // Real-time Countdown Engine
   useEffect(() => {
     const calculateTime = () => {
@@ -56,12 +50,12 @@ const loggedInUser = user?.role || "user";
   const isExpired = timeLeft.passed;
   const isOutOfStock = (ticket.quantity || 0) <= 0;
 
-  // ⚡ Role-Based Check Constraints
-  const isPassenger = loggedInUser && loggedInUser.role === 'user';
-  const isStaffOrVendor = loggedInUser && (loggedInUser.role === 'vendor' || loggedInUser.role === 'admin');
+  // ⚡ Role-Based Check Constraints (এখানে ফিক্স করা হয়েছে মামা)
+  const isPassenger = user?.role === 'user';
+  const isStaffOrVendor = user?.role === 'vendor' || user?.role === 'admin';
 
-  // বাটন ডিজেবল হবে যদি টিকিট এক্সপায়ার্ড হয়, স্টক না থাকে, অথবা ইউজার যদি জেনারেল প্যাসেঞ্জার ('user') না হয়
-  const isBookingDisabled = isExpired || isOutOfStock || !isPassenger;
+  // বাটন ডিজেবল করার লজিক (লগইন না থাকলে বা প্যাসেঞ্জার না হলে ডিজেবল থাকবে)
+  const isBookingDisabled = isExpired || isOutOfStock || !user || !isPassenger;
 
   return (
     <div className="space-y-6 text-left selection:bg-[#FF6B35]/20">
@@ -146,7 +140,7 @@ const loggedInUser = user?.role || "user";
               </div>
             </div>
 
-            {/* 🛑 DYNAMIC WARNING MESSAGES HUG */}
+            {/* 🛑 DYNAMIC WARNING MESSAGES */}
             {/* ১. সময় বা স্টক শেষ হলে ওয়ার্নিং */}
             {(isExpired || isOutOfStock) && (
               <div className="flex items-center space-x-2 text-[11px] font-bold text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200/60">
@@ -166,7 +160,7 @@ const loggedInUser = user?.role || "user";
             )}
 
             {/* ৩. কোনো ইউজার যদি লগইন অবস্থায় না থাকে তার জন্য নোটিশ */}
-            {!loggedInUser && (
+            {!user && (
               <div className="flex items-center space-x-2 text-[11px] font-bold text-zinc-500 bg-zinc-50 p-2.5 rounded-xl border border-zinc-200">
                 <Lock className="h-3.5 w-3.5 shrink-0" />
                 <span>Please log in as a passenger to purchase tickets.</span>
@@ -179,7 +173,7 @@ const loggedInUser = user?.role || "user";
               whileTap={!isBookingDisabled ? { scale: 0.98 } : {}}
               onClick={() => setIsModalOpen(true)}
               disabled={isBookingDisabled}
-              className="w-full flex items-center justify-center space-x-2 py-3.5 bg-[#1E3A8A] text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm hover:bg-[#122554] disabled:opacity-20 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center space-x-2 py-3.5 bg-[#1E3A8A] text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm hover:bg-[#122554] disabled:opacity-45 disabled:bg-zinc-200 disabled:text-zinc-400 disabled:cursor-not-allowed"
             >
               <ShieldCheck className="h-4 w-4 text-[#FF6B35]" />
               <span>

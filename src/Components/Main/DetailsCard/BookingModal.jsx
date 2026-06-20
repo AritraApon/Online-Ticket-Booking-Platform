@@ -162,7 +162,7 @@ const user = session?.user;
               <CheckCircle2 className="h-7 w-7 animate-pulse" />
             </div>
             <h4 className="font-black text-zinc-900 text-lg tracking-tight">Booking Logged Safely</h4>
-            <p className="text-xs text-zinc-400 font-semibold max-w-[280px]">
+            <p className="text-xs text-zinc-400 font-semibold max-w-70">
               Status mapped as <span className="text-[#FF6B35] font-black uppercase">Pending</span>. Payload data dispatched to system router.
             </p>
           </motion.div>
@@ -171,7 +171,7 @@ const user = session?.user;
           <form onSubmit={handleBookingSubmit} className="space-y-4">
 
             {/* Target Core Overview Block */}
-            <div className="bg-gradient-to-r from-zinc-50 to-zinc-100/50 p-4 border border-zinc-200 rounded-2xl relative overflow-hidden">
+            <div className="bg-linear-to-r from-zinc-50 to-zinc-100/50 p-4 border border-zinc-200 rounded-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-16 h-16 bg-[#1E3A8A]/5 rounded-full blur-xl" />
               <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-black block mb-0.5">Target Resource</span>
               <p className="text-sm font-black text-zinc-800 truncate">{ticket.title}</p>
@@ -195,7 +195,7 @@ const user = session?.user;
                   disabled={quantity <= 1 || maxAvailable === 0}
                   className="h-10 w-10 flex items-center justify-center bg-white border border-zinc-200 hover:border-zinc-400 active:bg-zinc-100 text-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed rounded-xl transition-all shadow-sm"
                 >
-                  <Minus className="h-4 w-4 stroke-[3]" />
+                  <Minus className="h-4 w-4 stroke-3" />
                 </button>
 
                 {/* Live Value Track */}
@@ -213,7 +213,7 @@ const user = session?.user;
                   disabled={quantity >= maxAvailable || maxAvailable === 0}
                   className="h-10 w-10 flex items-center justify-center bg-[#1E3A8A] hover:bg-indigo-950 text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-xl transition-all shadow-md shadow-blue-900/10"
                 >
-                  <Plus className="h-4 w-4 stroke-[3]" />
+                  <Plus className="h-4 w-4 stroke-3" />
                 </button>
               </div>
             </div>

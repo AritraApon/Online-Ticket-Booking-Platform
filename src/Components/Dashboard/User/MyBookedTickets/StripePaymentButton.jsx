@@ -47,7 +47,7 @@ export default function StripePaymentButton({ bookingId, totalAmount, isTimePass
         <Loader2 className="h-3.5 w-3.5 animate-spin text-[#FF6B35]" />
       ) : (
         <div className="h-4 w-4 rounded-full bg-zinc-800 flex items-center justify-center transition-transform group-hover/btn:translate-x-0.5">
-          <ArrowRight className="h-2.5 w-2.5 text-[#FF6B35] stroke-[3]" />
+          <ArrowRight className="h-2.5 w-2.5 text-[#FF6B35] stroke-3" />
         </div>
       )}
     </button>

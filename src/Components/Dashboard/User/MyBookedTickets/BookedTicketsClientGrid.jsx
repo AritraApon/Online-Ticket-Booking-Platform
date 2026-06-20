@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Calendar, ChevronLeft, ChevronRight, Star, ArrowRight, Filter } from 'lucide-react';
 import StripePaymentButton from './StripePaymentButton';
+import Image from 'next/image';
 
 // ⏱️ Clean Minimal Countdown Engine Component
 function TicketCardCountdown({ targetDate, status }) {
@@ -43,14 +44,9 @@ function TicketCardCountdown({ targetDate, status }) {
 
 export default function BookedTicketsClientGrid({ initialBookings }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all'); // 💡 New Filter State
+  const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-
-  // সার্চ বা ফিল্টার চেঞ্জ হলে পেজ ১ নম্বরে রিসেট হবে
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, statusFilter]);
 
   // 🔍 Advanced Filtering: Search + Status Filter Combined
   const filteredBookings = initialBookings.filter(booking => {
@@ -94,19 +90,25 @@ export default function BookedTicketsClientGrid({ initialBookings }) {
             type="text"
             placeholder="Search bookings by destination or train..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1); // ⚡ ইউজার টাইপ করলেই পেজ ১ এ চলে যাবে (No useEffect Needed)
+            }}
             className="w-full bg-zinc-50/50 border border-zinc-200 pl-10 pr-4 py-2.5 rounded-xl text-xs font-medium text-zinc-800 focus:outline-none focus:border-zinc-400 focus:bg-white transition-all"
           />
         </div>
 
         {/* ⚡ Premium Status Filter Dropdown */}
-        <div className="relative min-w-[160px] flex items-center">
+        <div className="relative min-w-40 flex items-center">
           <span className="absolute left-3.5 pointer-events-none text-zinc-400">
             <Filter className="h-3.5 w-3.5" />
           </span>
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setCurrentPage(1); // ⚡ ফিল্টার চেঞ্জ করলেই পেজ ১ এ চলে যাবে (No useEffect Needed)
+            }}
             className="w-full bg-zinc-50/50 border border-zinc-200 pl-9 pr-8 py-2.5 rounded-xl text-xs font-bold text-zinc-700 focus:outline-none focus:border-zinc-400 focus:bg-white transition-all appearance-none cursor-pointer"
           >
             <option value="all">All Statuses</option>
@@ -150,7 +152,7 @@ export default function BookedTicketsClientGrid({ initialBookings }) {
                   >
                     {/* 📸 Image Frame */}
                     <div className="relative h-52 w-full overflow-hidden shrink-0">
-                      <img
+                      <Image width={400} height={400}
                         src={booking?.image}
                         alt={booking?.ticketTitle}
                         className="w-full h-full object-cover"

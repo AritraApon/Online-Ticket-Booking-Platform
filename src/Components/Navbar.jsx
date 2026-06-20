@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Train, LogOut, User, Loader2 } from "lucide-react";
 import { authClient, useSession } from "@/lib/auth-client";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -111,7 +112,7 @@ const user = session?.user;
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center space-x-3 p-1.5 rounded-full hover:bg-indigo-900/40 focus:outline-none border border-transparent hover:border-indigo-700/50 transition-all"
                 >
-                  <img
+                  <Image width={30} height={30}
                     className="h-8 w-8 rounded-full object-cover ring-2 ring-[#FF6B35]"
                     src={user?.image || defaultAvatar}
                     alt="User Avatar"
@@ -120,7 +121,7 @@ const user = session?.user;
                       e.target.src = defaultAvatar;
                     }}
                   />
-                  <span className="text-sm font-medium text-indigo-50 max-w-[120px] truncate">
+                  <span className="text-sm font-medium text-indigo-50 max-w-30 truncate">
                     {user?.name || "User"}
                   </span>
                 </button>
@@ -230,7 +231,7 @@ const user = session?.user;
           ) : user ? (
             <div className="pt-2 px-3">
               <div className="flex items-center space-x-3 mb-3">
-                <img
+                <Image width={40} height={40}
                   className="h-10 w-10 rounded-full object-cover ring-2 ring-[#FF6B35]"
                   src={user?.image || defaultAvatar}
                   alt="User"
@@ -241,7 +242,7 @@ const user = session?.user;
                 />
                 <div>
                   <h4 className="text-sm font-bold text-white leading-tight">{user?.name || "User"}</h4>
-                  <p className="text-xs text-indigo-200 truncate max-w-[200px]">{user?.email}</p>
+                  <p className="text-xs text-indigo-200 truncate max-w-50">{user?.email}</p>
                 </div>
               </div>
               <div className="space-y-1">
