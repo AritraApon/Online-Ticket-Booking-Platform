@@ -80,6 +80,7 @@ const user = session?.user;
       totalPrice: calculatedTotal,
       from: ticket.from,
       to: ticket.to,
+      isFraud:user?.isFraud,
       vendorId: ticket.vendorId,
       departureDateTime: ticket.departureDateTime,
       status: "pending", // Schema rules: "pending" | "accepted" | "rejected" | "paid"

@@ -4,11 +4,14 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image'; // 🖼️ Next.js Image Component যোগ করা হয়েছে
 import {
   Search, Filter, ShieldCheck, UserCheck, AlertTriangle,
-  Users, UserX, ArrowLeft, ArrowRight, ShieldAlert, Trash2,
+  Users, UserX, ArrowLeft, ArrowRight,
   Shield, Store, Ban, Unlock, Info
 } from 'lucide-react';
+import { updateUserRole } from '@/lib/actions/userRoleUpdate';
+import { updateUserIsFraud } from '@/lib/actions/isFraud';
 
 export default function ManageUsersClient({ initialUsers }) {
   const router = useRouter();
@@ -25,7 +28,7 @@ export default function ManageUsersClient({ initialUsers }) {
     isOpen: false,
     userId: null,
     userName: '',
-    actionType: '', // 'changeRole' | 'toggleFraud' | 'deleteUser'
+    actionType: '', // 'changeRole' | 'toggleFraud'
     payload: {}
   });
 
@@ -62,36 +65,50 @@ export default function ManageUsersClient({ initialUsers }) {
     setModalContext({ isOpen: false, userId: null, userName: '', actionType: '', payload: {} });
   };
 
-  const handleMutationProcess = async () => {
-    const { userId, actionType, payload } = modalContext;
+ const handleMutationProcess = async () => {
+  const { userId, actionType, payload } = modalContext;
 
-    try {
-      if (actionType === 'changeRole') {
+  try {
+    if (actionType === 'changeRole') {
+
+      const response = await updateUserRole(userId, { role: payload.role });
+
+      if (response?.modifiedCount > 0 || response?.acknowledged) {
         setUsers((prev) =>
           prev.map((u) => (u._id === userId ? { ...u, role: payload.role, isFraud: payload.role === 'admin' ? false : u.isFraud } : u))
         );
         toast.success(`User role updated to ${payload.role} successfully.`);
-      } else if (actionType === 'toggleFraud') {
+      } else {
+        toast.error("Failed to update role in database.");
+      }
+    } else if (actionType === 'toggleFraud') {
+
+      const response = await updateUserIsFraud(userId, { isFraud: payload.isFraud });
+
+      if (response?.message || response?.modifiedCount > 0) {
         setUsers((prev) =>
           prev.map((u) => (u._id === userId ? { ...u, isFraud: payload.isFraud } : u))
         );
+
         if (payload.isFraud) {
-          toast.warning("Vendor marked as FRAUD. Tickets hidden.");
+          toast.warning("Vendor marked as FRAUD. All tickets hidden.");
         } else {
-          toast.success("Fraud status cleared.");
+          toast.success("Fraud status successfully cleared.");
         }
-      } else if (actionType === 'deleteUser') {
-        setUsers((prev) => prev.filter((u) => u._id !== userId));
-        toast.success("User account permanently purged.");
+      } else {
+        toast.error("Failed to update fraud status.");
       }
-      router.refresh();
-    } catch (err) {
-      console.error(err);
-      toast.error("Database communication failure.");
-    } finally {
-      closeActionModal();
     }
-  };
+
+    // নেক্সট জেএস পেজ রিফ্রেশ করে লেটেস্ট ডাটা সার্ভার থেকে টানার জন্য
+    router.refresh();
+  } catch (err) {
+    console.error("API Error:", err);
+    toast.error("Database communication failure.");
+  } finally {
+    closeActionModal();
+  }
+};
 
   return (
     <div className="space-y-6">
@@ -146,7 +163,7 @@ export default function ManageUsersClient({ initialUsers }) {
           />
         </div>
 
-        <div className="relative min-w-[170px] flex items-center">
+        <div className="relative min-w-42.5 flex items-center">
           <span className="absolute left-3.5 text-slate-400"><Filter className="h-3.5 w-3.5" /></span>
           <select
             value={roleFilter}
@@ -163,13 +180,12 @@ export default function ManageUsersClient({ initialUsers }) {
         </div>
       </div>
 
-      {/* ==================== 🏷️ ICON LEGEND GUIDE (টেবিলের উপরে ছোট গাইড) ==================== */}
+      {/* ==================== 🏷️ ICON LEGEND GUIDE ==================== */}
       <div className="bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/80 rounded-xl p-2.5 px-4 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11px] text-slate-500 font-bold">
         <span className="flex items-center gap-1 text-slate-400"><Info className="h-3.5 w-3.5" /> Control Guide:</span>
         <span className="flex items-center gap-1.5"><Shield className="h-3.5 w-3.5 text-[#1E3A8A]" /> Admin Grant</span>
         <span className="flex items-center gap-1.5"><Store className="h-3.5 w-3.5 text-emerald-600" /> Vendor Grant</span>
         <span className="flex items-center gap-1.5"><Ban className="h-3.5 w-3.5 text-amber-500" /> Mark Fraud</span>
-        <span className="flex items-center gap-1.5"><Trash2 className="h-3.5 w-3.5 text-rose-600" /> Delete Account</span>
       </div>
 
       {/* ==================== 📋 DATA TABLE ==================== */}
@@ -180,38 +196,47 @@ export default function ManageUsersClient({ initialUsers }) {
       ) : (
         <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800/80 overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left min-w-[950px]">
+            <table className="w-full border-collapse text-left min-w-237.5">
               <thead>
                 <tr className="bg-[#F8FAFC] dark:bg-slate-950/40 border-b border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-wider">
                   <th className="p-4 pl-6 w-[8%]">Profile</th>
-                  <th className="p-4 w-[22%]">Name</th>
-                  <th className="p-4 w-[26%]">Email Address</th>
-                  <th className="p-4 text-center w-[14%]">Status/Role</th>
-                  <th className="p-4 pr-6 text-right w-[30%]">Actions Control</th>
+                  <th className="p-4 w-[24%]">Name</th>
+                  <th className="p-4 w-[28%]">Email Address</th>
+                  <th className="p-4 text-center w-[15%]">Status/Role</th>
+                  <th className="p-4 pr-6 text-right w-[25%]">Actions Control</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs font-bold text-slate-700 dark:text-slate-300">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs font-bold text-slate-700 dark:text-zinc-300">
                 {currentItems.map((user) => (
                   <tr key={user._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-950/20 transition-colors">
                     <td className="p-4 pl-6">
-                      <img src={user.image} className="w-9 h-9 object-cover rounded-full ring-2 ring-slate-100 dark:ring-slate-800" alt="Avatar" />
+                      {/* 🖼️ Standard Image Component with defined width/height */}
+                      {/* <img src={user.image} className="w-9 h-9 object-cover rounded-full ring-2 ring-slate-100 dark:ring-slate-800" alt="Avatar" /> */}
+                      <div className="relative w-9 h-9">
+                        <Image
+                          src={user?.image || "/fallback-avatar.png"}
+                          alt={`${user?.name || "User"}'s Avatar`}
+                          width={40}
+                          height={40}
+                          className="w-9 h-9 object-cover rounded-full ring-2 ring-slate-100 dark:ring-slate-800"
+                        />
+                      </div>
                     </td>
                     <td className="p-4 font-black text-sm text-slate-900 dark:text-white">{user.name}</td>
                     <td className="p-4 font-mono text-slate-400 dark:text-slate-500">{user.email}</td>
                     <td className="p-4 text-center">
-                      <span className={`inline-block px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${
-                        user.isFraud ? 'bg-rose-50 border-rose-200 text-rose-600 dark:bg-rose-500/5' :
-                        user.role === 'admin' ? 'bg-blue-50 border-blue-200 text-[#1E3A8A] dark:bg-blue-500/5 dark:text-blue-400' :
-                        user.role === 'vendor' ? 'bg-emerald-50 border-emerald-200 text-emerald-600 dark:bg-emerald-500/5' :
-                        'bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
-                      }`}>
+                      <span className={`inline-block px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${user.isFraud ? 'bg-rose-50 border-rose-200 text-rose-600 dark:bg-rose-500/5' :
+                          user.role === 'admin' ? 'bg-blue-50 border-blue-200 text-[#1E3A8A] dark:bg-blue-500/5 dark:text-blue-400' :
+                            user.role === 'vendor' ? 'bg-emerald-50 border-emerald-200 text-emerald-600 dark:bg-emerald-500/5' :
+                              'bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
+                        }`}>
                         {user.isFraud ? 'FRAUD VENDOR' : user.role}
                       </span>
                     </td>
 
-                    {/* 🛠️ অ্যাকশন বাটন প্যানেল - সব বাটন এখন এক রো-তে সুন্দর এলাইন্ড */}
+                    {/* 🛠️ অ্যাকশন বাটন কন্ট্রোল */}
                     <td className="p-4 pr-6 text-right">
-                      <div className="flex items-center justify-end space-x-1.5">
+                      <div className="flex items-center justify-end space-x-2">
 
                         {/* 🛡️ Make Admin বাটন */}
                         <button
@@ -233,34 +258,19 @@ export default function ManageUsersClient({ initialUsers }) {
                           <Store className="h-4 w-4" />
                         </button>
 
-                        {/* ⚠️ Mark as Fraud বাটন (ডিসাবলড মোড সহ যাতে জায়গা ফাঁকা না লাগে) */}
-                        <button
-                          onClick={() => {
-                            if(user.role === 'vendor') {
-                              openActionModal(user._id, user.name, 'toggleFraud', { isFraud: !user.isFraud });
-                            }
-                          }}
-                          disabled={user.role !== 'vendor'}
-                          title={user.role !== 'vendor' ? 'Fraud marking only available for vendors' : user.isFraud ? 'Unmark Fraud' : 'Mark as Fraud'}
-                          className={`p-2 rounded-xl border transition-all ${
-                            user.role !== 'vendor'
-                              ? 'opacity-25 border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed dark:border-slate-800 dark:bg-slate-950'
-                              : user.isFraud
-                                ? 'bg-emerald-50 border-emerald-200 text-emerald-600 hover:bg-emerald-600 hover:text-white cursor-pointer'
-                                : 'bg-amber-50 border-amber-300 text-amber-600 hover:bg-amber-500 hover:text-white cursor-pointer'
-                          }`}
-                        >
-                          {user.isFraud ? <Unlock className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
-                        </button>
-
-                        {/* 🗑️ Delete বাটন - এখন এক লাইনেই ইন-লাইন সেট করা */}
-                        <button
-                          onClick={() => openActionModal(user._id, user.name, 'deleteUser')}
-                          title="Delete User From System"
-                          className="p-2 rounded-xl border border-rose-100 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white dark:bg-rose-500/5 dark:border-rose-500/20 dark:text-rose-400 dark:hover:bg-rose-600 dark:hover:text-white transition-all cursor-pointer"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        {/* ⚠️ Fraud বাটন লজিক [FIXED]: ইউজার ভেন্ডর হলেই কেবল বাটন রেন্ডার হবে */}
+                        {user.role === 'vendor' && (
+                          <button
+                            onClick={() => openActionModal(user._id, user.name, 'toggleFraud', { isFraud: !user.isFraud })}
+                            title={user.isFraud ? 'Unmark Fraud' : 'Mark as Fraud'}
+                            className={`p-2 rounded-xl border transition-all cursor-pointer ${user.isFraud
+                                ? 'bg-emerald-50 border-emerald-200 text-emerald-600 hover:bg-emerald-600 hover:text-white'
+                                : 'bg-amber-50 border-amber-300 text-amber-600 hover:bg-amber-500 hover:text-white'
+                              }`}
+                          >
+                            {user.isFraud ? <Unlock className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
+                          </button>
+                        )}
 
                       </div>
                     </td>
@@ -307,23 +317,18 @@ export default function ManageUsersClient({ initialUsers }) {
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-2xl p-6 space-y-6 relative z-10 text-left">
 
               <div className="flex items-center space-x-3">
-                {modalContext.actionType === 'deleteUser' ? (
-                  <ShieldAlert className="h-6 w-6 text-rose-500 shrink-0 animate-bounce" />
-                ) : modalContext.actionType === 'toggleFraud' && modalContext.payload.isFraud ? (
+                {modalContext.actionType === 'toggleFraud' && modalContext.payload.isFraud ? (
                   <AlertTriangle className="h-6 w-6 text-amber-500 shrink-0 animate-pulse" />
                 ) : (
                   <AlertTriangle className="h-6 w-6 text-blue-500 shrink-0" />
                 )}
                 <h3 className="text-base font-black tracking-tight text-slate-900 dark:text-white">
-                  {modalContext.actionType === 'deleteUser' ? '⚠️ Hard Account Purge' :
-                   modalContext.actionType === 'toggleFraud' && modalContext.payload.isFraud ? '🚨 Fraud Sanction Confirmation' : 'Confirm Access Modification'}
+                  {modalContext.actionType === 'toggleFraud' && modalContext.payload.isFraud ? '🚨 Fraud Sanction Confirmation' : 'Confirm Access Modification'}
                 </h3>
               </div>
 
               <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                {modalContext.actionType === 'deleteUser' ? (
-                  <>Are you absolutely certain you want to delete <span className="font-bold text-slate-900 dark:text-white">{modalContext.userName}</span>? This process removes user records from the main cluster and cannot be undone.</>
-                ) : modalContext.actionType === 'toggleFraud' ? (
+                {modalContext.actionType === 'toggleFraud' ? (
                   modalContext.payload.isFraud ? (
                     <>Are you sure you want to flag <span className="font-bold text-slate-900 dark:text-white">{modalContext.userName}</span> as fraud? <strong>All associated tickets will be instantly hidden</strong> and this vendor will lose ticket creation access.</>
                   ) : (
@@ -335,16 +340,14 @@ export default function ManageUsersClient({ initialUsers }) {
               </p>
 
               <div className="flex items-center justify-end space-x-3 pt-2">
-                <button onClick={closeActionModal} className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 transition-colors cursor-pointer">Abort</button>
+                <button onClick={closeActionModal} className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-200 transition-colors cursor-pointer">Abort</button>
                 <button
                   onClick={handleMutationProcess}
-                  className={`px-5 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-white shadow-lg transition-all active:scale-95 cursor-pointer ${
-                    modalContext.actionType === 'deleteUser' ? 'bg-rose-600 hover:bg-rose-50 shadow-rose-600/10' :
-                    modalContext.actionType === 'toggleFraud' && modalContext.payload.isFraud ? 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/10' :
-                    'bg-[#1E3A8A] hover:bg-blue-700 shadow-[#1E3A8A]/10'
-                  }`}
+                  className={`px-5 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-white shadow-lg transition-all active:scale-95 cursor-pointer ${modalContext.actionType === 'toggleFraud' && modalContext.payload.isFraud ? 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/10' :
+                      'bg-[#1E3A8A] hover:bg-blue-700 shadow-[#1E3A8A]/10'
+                    }`}
                 >
-                  {modalContext.actionType === 'deleteUser' ? 'Purge Record' : 'Confirm'}
+                  Confirm
                 </button>
               </div>
             </motion.div>

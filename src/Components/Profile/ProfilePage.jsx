@@ -2,7 +2,7 @@
 
 import React from "react";
 import { authClient } from "@/lib/auth-client";
-import { User, Mail, Shield, Calendar, Edit2, ShieldAlert, Loader2 } from "lucide-react";
+import { User, Mail, Shield, Calendar, Edit2, ShieldAlert, Loader2, AlertTriangle } from "lucide-react";
 
 export default function ProfilePage() {
   const { data: session, isPending } = authClient.useSession();
@@ -20,6 +20,16 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto transition-colors duration-300">
+
+      {/* ⚠️ Fraud Alert Notification Banner */}
+      {user?.isFraud && (
+        <div className="flex items-center gap-3 p-4 rounded-2xl border border-red-500/20 bg-red-500/5 text-red-600 dark:bg-red-500/10 dark:text-red-400 shadow-sm">
+          <AlertTriangle className="h-5 w-5 shrink-0 animate-pulse text-red-500" />
+          <div className="text-sm font-black uppercase tracking-wide">
+            Warning: Your account has been flagged for fraudulent activity.
+          </div>
+        </div>
+      )}
 
       {/* 1. Premium Header Banner & Identity Segment */}
       <div className="relative rounded-3xl bg-white dark:bg-zinc-900 shadow-xl shadow-zinc-200/40 dark:shadow-none border border-zinc-100 dark:border-zinc-800/80 overflow-hidden">
@@ -53,7 +63,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Simple Clean Normal Button - Click Handler-e pore modal trigger add korte parbe */}
+          {/* Simple Clean Normal Button */}
           <button
             onClick={() => console.log("Open edit modal layout screen container stream")}
             className="inline-flex items-center space-x-2 px-6 py-3 bg-[#1E3A8A] hover:bg-indigo-900 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-white dark:text-zinc-200 font-bold text-sm rounded-xl shadow-md active:scale-95 transition-all w-full sm:w-auto justify-center"

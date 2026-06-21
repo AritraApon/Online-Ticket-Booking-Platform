@@ -6,9 +6,10 @@ import { toast } from "react-toastify";
 import {
   PlusCircle, Tag, MapPin, Bus,
   Layers, Calendar, Sparkles, Image as ImageIcon,
-  User, Mail, Loader2, UploadCloud, CheckCircle2
+  User, Mail, Loader2, UploadCloud, CheckCircle2, AlertTriangle
 } from "lucide-react";
 import { addTicket } from "@/lib/actions/tickets";
+import Image from "next/image";
 
 export default function AddTicketForm() {
   const { data: session, isPending: isAuthPending } = authClient.useSession();
@@ -113,10 +114,6 @@ export default function AddTicketForm() {
       createdAt: new Date().toISOString(),
     };
 
-    // console.log("Final Compiled payload for MongoDB:", finalTicketPayload);
-    // toast.success("Ticket data compiled perfectly! Check Console.");
-
-    //mongodb post : add ticket
     const data = await addTicket(finalTicketPayload);
     console.log(data);
 
@@ -127,20 +124,16 @@ export default function AddTicketForm() {
         title: "",
         from: "",
         to: "",
-        transportType: "bus", // default fallback state-e firbe
+        transportType: "bus",
         pricePerUnit: "",
         quantity: "",
         departureDateTime: "",
       });
-      setSelectedPerks([]); // Selected perks array empty hobe
+      setSelectedPerks([]);
       setImageUrl("");
-        // Image link block string empty hobe
     } else {
       toast.error("Failed to add a new ticket!");
     }
-
-
-
   };
 
   if (isAuthPending) {
@@ -314,7 +307,7 @@ export default function AddTicketForm() {
           </div>
         </div>
 
-        {/* SECTION 3: Transit Perks (Fixed Checkbox Triggers) */}
+        {/* SECTION 3: Transit Perks */}
         <div className="space-y-4">
           <h3 className="text-sm font-extrabold uppercase tracking-widest text-[#1E3A8A] dark:text-blue-400 border-b border-zinc-100 dark:border-zinc-800 pb-2 flex items-center gap-2">
             <Sparkles className="h-4 w-4" /> Transit Perks & Accommodations
@@ -386,7 +379,7 @@ export default function AddTicketForm() {
 
             <div className="flex items-center justify-center bg-zinc-50 dark:bg-zinc-950/40 rounded-2xl border border-zinc-200 dark:border-zinc-800 h-36 p-2 overflow-hidden">
               {imageUrl ? (
-                <img
+                <Image width={300} height={300}
                   src={imageUrl}
                   alt="Uploaded Source Preview"
                   className="w-full h-full object-cover rounded-xl"
@@ -437,16 +430,25 @@ export default function AddTicketForm() {
           </div>
         </div>
 
-        {/* Global Submit Action */}
+        {/* Global Submit Action / Fraud Warning System */}
         <div className="pt-6 border-t border-zinc-100 dark:border-zinc-800 flex justify-end">
-          <button
-            type="submit"
-            disabled={isUploading}
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-4 bg-[#FF6B35] hover:bg-[#ff571a] text-white font-black text-sm rounded-xl shadow-lg shadow-orange-500/10 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <PlusCircle className="h-5 w-5" />
-            <span>Add Ticket to Distribution</span>
-          </button>
+          {user?.isFraud ? (
+            <div className="w-full bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 p-4 rounded-xl flex items-center space-x-3 text-red-600 dark:text-red-400">
+              <AlertTriangle className="h-5 w-5 shrink-0" />
+              <p className="text-sm font-bold">
+              You have been marked as (Fraud). Your ability to upload new tickets has been suspended.
+              </p>
+            </div>
+          ) : (
+            <button
+              type="submit"
+              disabled={isUploading}
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-4 bg-[#FF6B35] hover:bg-[#ff571a] text-white font-black text-sm rounded-xl shadow-lg shadow-orange-500/10 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <PlusCircle className="h-5 w-5" />
+              <span>Add Ticket to Distribution</span>
+            </button>
+          )}
         </div>
 
       </form>

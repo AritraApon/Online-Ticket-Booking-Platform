@@ -5,10 +5,15 @@ import { motion } from 'framer-motion';
 import DeleteButton from './DeleteButton';
 import Link from 'next/link';
 import UpdateTicketButton from './UpdateTicketButton';
+import { authClient } from "@/lib/auth-client"; // Auth সেশন আনার জন্য
 
 export default function TicketCard({ ticket, onUpdate, onDelete, index }) {
   const [timeLeft, setTimeLeft] = useState("");
   const [isExpired, setIsExpired] = useState(false);
+
+  // 🔐 Auth Client Session Hook for Fraud checking
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
 
   // 🕒 Countdown Timer Engine logic
   useEffect(() => {
@@ -161,6 +166,13 @@ export default function TicketCard({ ticket, onUpdate, onDelete, index }) {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
               </svg>
               <span>Your ticket is rejected</span>
+            </div>
+          ) : user?.isFraud ? (
+            <div className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-black tracking-wide uppercase border border-red-500/20 bg-red-500/5 text-red-500 dark:bg-red-500/10">
+              <svg className="h-4 w-4 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <span>Action restricted. You are flagged as fraud.</span>
             </div>
           ) : (
             <>
