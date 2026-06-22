@@ -1,4 +1,5 @@
 import AdvertiseCard from "@/Components/Main/Home/AdvertiseCard/AdvertiseCard";
+import GlobalConnect from "@/Components/Main/Home/GlobalConnect";
 import HeroSlider from "@/Components/Main/Home/Hero/HeroSlider";
 import LatestTickets from "@/Components/Main/Home/LatestTickets/LatestTickets";
 import { Newsletter } from "@/Components/Main/Home/Newsletter";
@@ -15,6 +16,7 @@ export default function Home() {
       <LatestTickets/>
       <WhyChooseUs/>
       <StatsCounter/>
+      <GlobalConnect/>
       <Testimonials/>
       <Newsletter/>
 
