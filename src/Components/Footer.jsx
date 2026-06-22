@@ -56,7 +56,7 @@ export default function Footer() {
               {[
                 { label: 'Home', path: '/' },
                 { label: 'All Tickets', path: "/all-tickets" },
-                { label: 'Contact Us', path: '/contact' },
+                { label: 'Support', path: '/support' },
                 { label: 'About Us', path: '/about' }
               ].map((link) => (
                 <li key={link.label}>

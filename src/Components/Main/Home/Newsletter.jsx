@@ -1,0 +1,38 @@
+'use client'
+import { Send } from 'lucide-react';
+
+export function Newsletter() {
+  return (
+    <section className="py-12 px-4 max-w-7xl mx-auto">
+      <div className="w-full bg-gradient-to-r from-[#1E3A8A] via-indigo-950 to-zinc-950 rounded-[32px] p-8 sm:p-12 text-center relative overflow-hidden shadow-xl">
+        {/* ব্যাকগ্রাউন্ড ডেকোরেশন */}
+        <div className="absolute -top-10 -left-10 h-40 w-40 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-10 -right-10 h-40 w-40 bg-orange-500/10 rounded-full blur-3xl"></div>
+
+        <div className="relative z-10 max-w-xl mx-auto">
+          <span className="text-xs font-black uppercase tracking-widest text-[#FF6B35]">Get 10% Off Your First Trip</span>
+          <h2 className="text-2xl sm:text-3xl font-black text-white mt-1">Subscribe To Our Newsletter</h2>
+          <p className="text-xs sm:text-sm text-zinc-300 mt-2 leading-relaxed">
+            Join our mailing list and receive elite discount coupons, travel insights, and seasonal trending package updates.
+          </p>
+
+          <form onSubmit={(e) => e.preventDefault()} className="mt-8 flex flex-col sm:flex-row gap-3 bg-white/5 p-2 rounded-2xl border border-white/10 backdrop-blur-md">
+            <input
+              type="email"
+              placeholder="Enter your personal email..."
+              className="flex-grow bg-transparent px-4 py-3 text-sm text-white outline-none placeholder-zinc-400 focus:placeholder-transparent"
+              required
+            />
+            <button
+              type="submit"
+              className="bg-[#FF6B35] hover:bg-orange-600 active:scale-95 text-white font-bold text-sm px-6 py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md"
+            >
+              Subscribe
+              <Send className="h-4 w-4" />
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+}

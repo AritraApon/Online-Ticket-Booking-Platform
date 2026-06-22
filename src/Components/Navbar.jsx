@@ -43,6 +43,10 @@ const user = session?.user;
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "All Tickets", path: "/all-tickets" },
+    { name: "About", path: "/about" },
+    { name: "Support", path: "/support" },
+
+
   ];
 
   return (
