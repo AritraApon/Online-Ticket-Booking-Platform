@@ -1,11 +1,21 @@
 import TicketDetailsClient from '@/Components/Main/DetailsCard/TicketDetailsClient';
 import { getTicketDetails } from '@/lib/api/allTickets';
+import { auth } from '@/lib/auth';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-import React from 'react';
+
 
 const TicketDetailsPage = async ({ params }) => {
   const { id } = await params;
 
+const session = await auth.api.getSession({
+    headers: await headers() // you need to pass the headers object.
+})
+
+if(!session){
+  redirect('/login')
+}
   // Fetch single ticket server data
   const ticket = await getTicketDetails(id);
 
