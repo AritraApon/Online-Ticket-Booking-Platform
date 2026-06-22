@@ -1,11 +1,14 @@
+import AdvertiseCard from "@/Components/Main/Home/AdvertiseCard/AdvertiseCard";
 import HeroSlider from "@/Components/Main/Home/Hero/HeroSlider";
-import SearchCard from "@/Components/Main/Home/Hero/SearchCard";
-import Image from "next/image";
+import LatestTickets from "@/Components/Main/Home/LatestTickets/LatestTickets";
+
 
 export default function Home() {
   return (
     <div>
       <HeroSlider />
+      <LatestTickets/>
+      <AdvertiseCard/>
     </div>
   );
 }

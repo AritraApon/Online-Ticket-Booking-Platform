@@ -4,12 +4,13 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
 import { motion } from "framer-motion";
-import SearchCard from "../SearchCard";
+// import SearchCard from "../SearchCard";
 
 // Swiper styles আমদানি
 import "swiper/css";
 import "swiper/css/effect-fade";
 import Image from "next/image";
+import SearchCard from "./SearchCard";
 
 export default function HeroSlider() {
   // স্লাইডারের ৪টি অবজেক্ট ডাটা (বাস, ট্রেন, প্লেন, লঞ্চ)
@@ -18,25 +19,25 @@ export default function HeroSlider() {
       id: 1,
       title: "Fly High, Explore Further",
       subtitle: "Find Cheap Flights & Airline Tickets Easily",
-      image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=1600&auto=format&fit=crop", // Plane
+      image: "https://i.ibb.co.com/TsmpNNh/photo-1436491865332-7a61a109cc05-q-80-w-1600-auto-format-fit-crop.jpg", // Plane
     },
     {
       id: 2,
       title: "Scenic Routes & Smooth Rides",
       subtitle: "Book Premium Intercity Bus Tickets Instantly",
-      image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=1600&auto=format&fit=crop", // Bus
+      image: "https://i.ibb.co.com/dZbnVjB/photo-1544620347-c4fd4a3d5957-q-80-w-1600-auto-format-fit-crop.jpg", // Bus
     },
     {
       id: 3,
       title: "Track Your Next Adventure",
       subtitle: "Comfortable and Secure Train Journey Across the Country",
-      image: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?q=80&w=1600&auto=format&fit=crop", // Train
+      image: "https://i.ibb.co.com/tpsrs1rP/photo-1474487548417-781cb71495f3-q-80-w-1600-auto-format-fit-crop.jpg", // Train
     },
     {
       id: 4,
       title: "Sail the Serene Waters",
       subtitle: "Get Top-Tier Launch Cabins & Deck Slots Effortlessly",
-      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop", // Launch / Cruise Water concept
+      image: "https://i.ibb.co.com/Kpxzy09n/photo-1507525428034-b723cf961d3e-q-80-w-1600-auto-format-fit-crop.jpg", // Launch / Cruise Water concept
     },
   ];
 

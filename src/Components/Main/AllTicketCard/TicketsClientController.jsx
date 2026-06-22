@@ -103,11 +103,11 @@ export default function TicketsClientController({ tickets, totalPages, currentPa
               onChange={(e) => updateParams({ transport: e.target.value })}
               className="w-full bg-zinc-50 dark:bg-[#070A12] pl-10 pr-4 py-2.5 rounded-xl text-xs font-bold border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-[#1E3A8A] appearance-none cursor-pointer"
             >
-              <option value="all">All Transits</option>
-              <option value="bus">Bus Network</option>
-              <option value="train">Rail System</option>
-              <option value="flight">Aviation Deck</option>
-              <option value="launch">Marine Fleet</option>
+              <option value="all">All</option>
+              <option value="bus">Bus</option>
+              <option value="train">Rail</option>
+              <option value="plane">Plane</option>
+              <option value="launch">Launch </option>
             </select>
           </div>
         </div>
