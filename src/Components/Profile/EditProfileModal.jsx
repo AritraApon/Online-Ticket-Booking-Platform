@@ -1,26 +1,103 @@
 'use client'
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { X, User, Image, ArrowRight, Sparkles } from "lucide-react";
+import { X, User, Image as ImageIcon, ArrowRight, Sparkles, Upload, Loader2 } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
 
 export default function EditProfileModal({ isOpen, onClose, currentUser }) {
   const [name, setName] = useState(currentUser?.name || "");
   const [imageUrl, setImageUrl] = useState(currentUser?.image || "");
+  const [uploading, setUploading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(currentUser?.image || "");
 
-  const handleFormSubmit = (e) => {
+  const fileInputRef = useRef(null);
+
+  // 📸 Image Selection and ImgBB Upload Mechanism
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Instant client-side local preview
+    const localPreview = URL.createObjectURL(file);
+    setPreviewUrl(localPreview);
+    setUploading(true);
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+      if (!apiKey) {
+        throw new Error("ImgBB API key is missing in environment variables.");
+      }
+
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const uploadedUrl = data.data.url;
+        setImageUrl(uploadedUrl);
+        setPreviewUrl(uploadedUrl);
+        toast.success("Image uploaded successfully.");
+      } else {
+        toast.error("Failed to upload image. Please check API configuration.");
+      }
+    } catch (error) {
+      console.error("ImgBB Upload Error:", error);
+      toast.error("Network error occurred during image upload.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // 💾 Form Submission via Better Auth User Update API
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    // মামা, এখানে তোর ব্যাকএন্ড লজিক বা মিউটেশন অ্যাড করে নিস
-    console.log("Submitting updated info:", { name, imageUrl });
-    alert("মামা, ইনফো সাবমিট হয়েছে! এবার ব্যাকএন্ড দিয়ে আপডেট করে নাও।");
-    onClose();
+
+    if (uploading) {
+      toast.warning("Please wait until the image upload is complete.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      // Better Auth implementation to update profile specifications
+      await authClient.updateUser({
+        name: name,
+        image: imageUrl,
+      }, {
+        onRequest: () => {
+          // Additional initialization steps if required
+        },
+        onSuccess: () => {
+          toast.success("Profile updated successfully.");
+          onClose();
+        },
+        onError: (ctx) => {
+          toast.error(ctx.error.message || "Failed to update profile features.");
+        }
+      });
+    } catch (error) {
+      console.error("Profile Update Error:", error);
+      toast.error("An unexpected error occurred while updating the profile.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* ব্যাকড্রপ ওভারলে */}
+      {/* Backdrop Overlay */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -29,17 +106,17 @@ export default function EditProfileModal({ isOpen, onClose, currentUser }) {
         className="absolute inset-0 bg-zinc-950/40 backdrop-blur-md"
       />
 
-      {/* মোডাল কন্টেনার */}
+      {/* Modal Container */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
         className="relative w-full max-w-md bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[28px] shadow-2xl p-6 overflow-hidden z-10"
       >
-        {/* টপ ডেকোরেশন গ্লো */}
+        {/* Decorative Top Background Glow */}
         <div className="absolute -top-12 -right-12 h-32 w-32 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-2xl" />
 
-        {/* হেডার */}
+        {/* Modal Header Section */}
         <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-4 mb-6">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-[#FF6B35]" />
@@ -48,6 +125,7 @@ export default function EditProfileModal({ isOpen, onClose, currentUser }) {
             </h3>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 rounded-xl hover:text-zinc-900 dark:hover:text-white transition-colors"
           >
@@ -55,11 +133,49 @@ export default function EditProfileModal({ isOpen, onClose, currentUser }) {
           </button>
         </div>
 
-        {/* ফর্ম */}
-        <form onSubmit={handleFormSubmit} className="space-y-4">
-          {/* নাম পরিবর্তনের ফিল্ড */}
+        {/* Configuration Form */}
+        <form onSubmit={handleFormSubmit} className="space-y-5">
+
+          {/* Avatar Rendering & Upload Input */}
+          <div className="flex flex-col items-center justify-center space-y-3 pb-2">
+            <div className="relative group">
+              <div className="h-24 w-24 rounded-2xl overflow-hidden ring-4 ring-zinc-100 dark:ring-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center shadow-inner relative">
+                {previewUrl ? (
+                  <img src={previewUrl} alt="Avatar Preview" className="h-full w-full object-cover" />
+                ) : (
+                  <ImageIcon className="h-8 w-8 text-zinc-400" />
+                )}
+
+                {/* Uploading State Overlay View */}
+                {uploading && (
+                  <div className="absolute inset-0 bg-zinc-950/60 backdrop-blur-sm flex items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin text-white" />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+              className="hidden"
+            />
+            <button
+              type="button"
+              disabled={uploading || submitting}
+              onClick={() => fileInputRef.current?.click()}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-zinc-100 hover:bg-zinc-200/80 dark:bg-zinc-800 dark:hover:bg-zinc-700/80 text-zinc-800 dark:text-zinc-200 font-bold text-xs rounded-xl transition-all shadow-sm active:scale-95 disabled:opacity-50"
+            >
+              <Upload className="h-3.5 w-3.5" />
+              {uploading ? "Uploading..." : "Upload New Photo"}
+            </button>
+          </div>
+
+          {/* Full Name Input Parameter */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide block">
+            <label className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide block pl-0.5">
               Full Name
             </label>
             <div className="relative">
@@ -72,42 +188,38 @@ export default function EditProfileModal({ isOpen, onClose, currentUser }) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 rounded-xl pl-10 pr-4 py-3 text-xs sm:text-sm font-semibold outline-none focus:border-[#FF6B35] focus:bg-white dark:focus:bg-zinc-950 transition-all duration-200"
-                placeholder="e.g. Aritra"
+                placeholder="Name Specification"
               />
             </div>
           </div>
 
-          {/* ইমেজ URL ফিল্ড (ImgBB-র জন্য) */}
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide block">
-              Profile Image URL (ImgBB)
-            </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
-                <Image className="h-4 w-4" />
-              </span>
-              <input
-                type="url"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 rounded-xl pl-10 pr-4 py-3 text-xs sm:text-sm font-semibold outline-none focus:border-[#FF6B35] focus:bg-white dark:focus:bg-zinc-950 transition-all duration-200"
-                placeholder="https://i.ibb.co/..."
-              />
-            </div>
-            <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium pl-1">
-              * Upload your photo to ImgBB and paste the direct link here.
-            </p>
-          </div>
-
-          {/* সাবমিট বাটন */}
-          <div className="pt-2">
+          {/* Form Actions Panel */}
+          <div className="flex items-center gap-3 pt-2">
+            <button
+              type="button"
+              disabled={submitting}
+              onClick={onClose}
+              className="flex-1 py-3 bg-zinc-100 hover:bg-zinc-200/70 dark:bg-zinc-800 dark:hover:bg-zinc-700/70 text-zinc-700 dark:text-zinc-300 font-bold text-xs rounded-xl transition-all uppercase tracking-widest text-center disabled:opacity-50"
+            >
+              Cancel
+            </button>
             <button
               type="submit"
-              className="w-full py-3 bg-gradient-to-r from-[#1E3A8A] to-blue-600 hover:from-[#FF6B35] hover:to-orange-600 text-white font-black text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg transition-all duration-300 uppercase tracking-widest"
+              disabled={uploading || submitting}
+              className="flex-1 py-3 bg-gradient-to-r from-[#1E3A8A] to-blue-600 hover:from-[#FF6B35] hover:to-orange-600 text-white font-black text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg transition-all duration-300 uppercase tracking-widest disabled:opacity-50"
             >
-              Save Changes <ArrowRight className="h-3.5 w-3.5" />
+              {submitting ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Saving...
+                </>
+              ) : (
+                <>
+                  Save Changes <ArrowRight className="h-3.5 w-3.5" />
+                </>
+              )}
             </button>
           </div>
+
         </form>
       </motion.div>
     </div>
