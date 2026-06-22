@@ -218,7 +218,7 @@ export default function BookedTicketsClientGrid({ initialBookings }) {
                         {/* Dynamic Action Hub Text & Status Control */}
                         <div className="flex justify-end items-center sm:w-auto max-w-xs md:max-w-md">
 
-                          {/* ⚠️ টিকিট ডিলিট হলে পেমেন্ট অফ + মেসেজ (স্ট্যাটাস যাই হোক না কেন) */}
+
                           {booking?.ticketDeleted === true ? (
                             <div className="flex items-center space-x-1.5 text-[#EF4444] font-bold text-[10px] sm:text-[11px] leading-tight bg-red-50/80 px-3 py-2 rounded-xl border border-red-200">
                               <AlertCircle className="h-4 w-4 text-[#EF4444] shrink-0" />
@@ -226,19 +226,20 @@ export default function BookedTicketsClientGrid({ initialBookings }) {
                             </div>
                           ) : booking.status === 'accepted' ? (
 
-                            /* ⚠️ স্ট্যাটাস accepted কিন্তু ভেন্ডর ফ্রড হলে পেমেন্ট অফ + সফট মেসেজ */
+
                            booking?.isFraud === true ? (
                               <div className="flex items-start space-x-2 text-[#D97706] bg-amber-50/90 border border-amber-200 p-2.5 rounded-xl text-[11px] font-semibold leading-normal shadow-sm">
                                 <AlertCircle className="h-4 w-4 text-[#D97706] shrink-0 mt-0.5" />
                                 <span>
-                                  This vendor has been suspended. This ticket is no longer available for payment. Please contact support if you've already paid.
+                                  This vendor has been suspended. This ticket is no longer available for payment. Please contact support if you have already paid.
                                 </span>
                               </div>
                             ) : (
-                              /* 🚀 সব ঠিক থাকলে এবং টাইম শেষ না হলে স্ট্রাইপ বাটন ও কাজ করবে */
+
                               <StripePaymentButton
                                 bookingId={booking._id}
-                                totalAmount={booking.totalPrice}
+                                totalAmount={booking?.totalPrice}
+                                ticketTitle={booking?.ticketTitle}
                                 isTimePassed={isTimePassed}
                               />
                             )

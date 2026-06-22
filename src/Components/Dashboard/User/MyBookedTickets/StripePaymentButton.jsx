@@ -1,29 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ArrowRight, AlertTriangle, Loader2 } from 'lucide-react';
+import React from 'react';
+import { ArrowRight, AlertTriangle } from 'lucide-react';
 
-export default function StripePaymentButton({ bookingId, totalAmount, isTimePassed }) {
-  const [loading, setLoading] = useState(false);
-
-  const handleStripePayment = async (e) => {
-    e.stopPropagation(); // কার্ডের হোভার বা অন্য ক্লিকে যেন ঝামেলা না করে
-    if (isTimePassed) return;
-
-    setLoading(true);
-    try {
-      console.log(`Initializing Stripe channel for Booking ID: ${bookingId}`);
-
-      // Simulate Stripe latency
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      alert(`Stripe Interface Triggered for Booking ID: ${bookingId}`);
-
-    } catch (err) {
-      console.error("Payment pipe connection error", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+export default function StripePaymentButton({ bookingId, totalAmount, isTimePassed ,ticketTitle}) {
 
   // ⚠️ Time Expired Guard Condition
   if (isTimePassed) {
@@ -36,20 +16,28 @@ export default function StripePaymentButton({ bookingId, totalAmount, isTimePass
   }
 
   return (
-    <button
-      onClick={handleStripePayment}
-      disabled={loading}
-      className="flex items-center space-x-2 px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-sm active:scale-[0.97] disabled:opacity-50 group/btn"
+    /* 🚀 স্ট্রাইপ ডক্স স্ট্যান্ডার্ড: ফর্ম অ্যাকশনের মাধ্যমে সরাসরি POST রিকোয়েস্ট */
+    <form
+      action="/api/checkout_sessions"
+      method="POST"
+      onClick={(e) => e.stopPropagation()} // কার্ডের হোভার বা অন্য ক্লিকে যেন ঝামেলা না করে
     >
-      <span>{loading ? "Processing..." : "Pay Now"}</span>
+      {/* 🛠️ হিডেন ইনপুট ফিল্ডস: যাতে ব্যাকএন্ড ফর্ম সাবমিট থেকে আইডি আর অ্যামাউন্ট পেয়ে যায় */}
+      <input type="hidden" name="bookingId" value={bookingId} />
+      <input type="hidden" name="totalAmount" value={totalAmount} />
+      <input type="hidden" name="ticketTitle" value={ticketTitle} />
 
-      {loading ? (
-        <Loader2 className="h-3.5 w-3.5 animate-spin text-[#FF6B35]" />
-      ) : (
+      <button
+        type="submit"
+        role="link"
+        className="flex items-center space-x-2 px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-sm active:scale-[0.97] group/btn"
+      >
+        <span>Pay Now</span>
+
         <div className="h-4 w-4 rounded-full bg-zinc-800 flex items-center justify-center transition-transform group-hover/btn:translate-x-0.5">
           <ArrowRight className="h-2.5 w-2.5 text-[#FF6B35] stroke-3" />
         </div>
-      )}
-    </button>
+      </button>
+    </form>
   );
 }
