@@ -85,7 +85,7 @@ export default async function Success({ searchParams }) {
           {/* Interactive Routing Call To Actions */}
           <div className="pt-2 space-y-2">
             <Link
-              href="/" // আপনার ইউজার বুকিং ড্যাশবোর্ডের আসল রুট পাথ এখানে দিবেন
+              href="/dashboard/user"
               className="w-full inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 text-white dark:text-zinc-900 font-bold text-xs uppercase tracking-wider transition-all active:scale-95 cursor-pointer shadow-lg"
             >
               <span>Go to Home</span>
