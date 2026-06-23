@@ -4,10 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, Mail, MapPin, Headphones, MessageSquare, Send, HelpCircle, ChevronDown } from 'lucide-react';
 
-export const metadata = {
-  title: "TicketBari || Support",
-  description: "Online ticket booking platform",
-};
+
 const contactMethods = [
   { icon: <Phone className="h-5 w-5 text-[#FF6B35]" />, title: "Call Hotline", value: "+880 1700-000000", sub: "24/7 Instant Transit Expert Line" },
   { icon: <Mail className="h-5 w-5 text-blue-500" />, title: "Email Support", value: "support@ticketbari.com", sub: "Response within 15 Minutes" },
