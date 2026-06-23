@@ -3,7 +3,7 @@ import { Send } from 'lucide-react';
 
 export function Newsletter() {
   return (
-    <section className="py-12 px-4 max-w-7xl mx-auto">
+    <section className="py-12 bg-white dark:bg-black px-4 max-w-7xl mx-auto">
       <div className="w-full bg-gradient-to-r from-[#1E3A8A] via-indigo-950 to-zinc-950 rounded-[32px] p-8 sm:p-12 text-center relative overflow-hidden shadow-xl">
         {/* ব্যাকগ্রাউন্ড ডেকোরেশন */}
         <div className="absolute -top-10 -left-10 h-40 w-40 bg-blue-500/10 rounded-full blur-3xl"></div>
