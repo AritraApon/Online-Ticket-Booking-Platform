@@ -2,7 +2,10 @@ import ClientAdvertiseView from '@/Components/Dashboard/Admin/Advertise/ClientAd
 import { getAdminAllTickets } from '@/lib/api/adminAllTickets';
 import React from 'react';
 
-
+export const metadata = {
+  title: "TicketBari || Advertisements ",
+  description: "Online ticket booking platform",
+};
 const AdvertisePage = async () => {
 
     const tickets = await getAdminAllTickets() || [];

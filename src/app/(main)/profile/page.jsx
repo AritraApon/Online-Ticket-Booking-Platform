@@ -1,6 +1,10 @@
 import ProfilePage from '@/Components/Profile/ProfilePage';
 import React from 'react';
 
+export const metadata = {
+  title: "Your Profile || TicketBari",
+  description: "Online ticket booking platform",
+};
 const MyProfilePage = () => {
     return (
         /*

@@ -3,6 +3,10 @@ import { getAllTickets } from '@/lib/api/allTickets';
 import { Ticket } from 'lucide-react';
 import React from 'react';
 
+export const metadata = {
+  title: "TicketBari- All-Tickets",
+  description: "Online ticket booking platform",
+};
 const AllTickets = async ({ searchParams }) => {
   const params = await searchParams; // Next.js 15+ এ await লাগে
 

@@ -5,6 +5,11 @@ import { headers } from 'next/headers';
 import React from 'react';
 import { Layers } from 'lucide-react';
 
+export const metadata = {
+  title: "TicketBari || Bookings-Request",
+  description: "Online ticket booking platform",
+};
+
 const RequestedBookingsPage = async () => {
   const session = await auth.api.getSession({
     headers: await headers()

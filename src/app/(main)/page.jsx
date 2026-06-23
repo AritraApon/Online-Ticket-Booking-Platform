@@ -7,7 +7,10 @@ import { StatsCounter } from "@/Components/Main/Home/StatsCounter";
 import { Testimonials } from "@/Components/Main/Home/Testimonials";
 import { WhyChooseUs } from "@/Components/Main/Home/WhyChooseUs";
 
-
+export const metadata = {
+  title: "TicketBari || Home",
+  description: "Online ticket booking platform",
+};
 export default function Home() {
   return (
     <div>

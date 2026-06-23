@@ -57,8 +57,17 @@ if(error){
     // alert(`Credentials secure & ready for authentication route: ${JSON.stringify(payload, null, 2)}`);
   };
 
-  const handleGoogleSignIn = () => {
-    alert("Triggering OAuth social link provider channel via Better-Auth API...");
+  const handleGoogleSignIn =async () => {
+
+  const data = await authClient.signIn.social({
+    provider: "google",
+  });
+if(data){
+    toast.success('Successfully Login')
+}
+if(error){
+    toast.error(error.message)
+}
   };
 
   // 🎭 Stagger Container Variants for Form Fields

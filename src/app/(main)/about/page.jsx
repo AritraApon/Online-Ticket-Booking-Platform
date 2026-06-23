@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { ShieldCheck, Compass, Heart, Award, Sparkles, Users, Milestone } from 'lucide-react';
 import Image from 'next/image';
 
+
+
 const values = [
   { icon: <ShieldCheck className="h-6 w-6 text-blue-500" />, title: "Absolute Trust", desc: "We prioritize your safety and security above everything else with bulletproof systems." },
   { icon: <Compass className="h-6 w-6 text-[#FF6B35]" />, title: "Infinite Exploring", desc: "Connecting every corner of Bangladesh so you can explore without limitations." },

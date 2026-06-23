@@ -5,6 +5,10 @@ import { auth } from '@/lib/auth';
 import { Users } from 'lucide-react';
 import ManageUsersClient from '@/Components/Dashboard/Admin/ManageUsersClient';
 
+export const metadata = {
+  title: "TicketBari || Manage-Users",
+  description: "Online ticket booking platform",
+};
 const ManageUserPage = async () => {
 
   const session = await auth.api.getSession({

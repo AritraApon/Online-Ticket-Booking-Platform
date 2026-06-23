@@ -7,6 +7,10 @@ import { patchMutation } from '@/lib/core/server';
 // 🎯 নোট: যদি আপনার ডাটাবেজ কানেকশনের কোনো ফাংশন থাকে (যেমন bookingsCollection), তবে সেটি এখানে ইম্পোর্ট করবেন
 // import { updateBookingPaymentStatus } from '@/lib/actions/bookings';
 
+export const metadata = {
+  title: "TicketBari || Payment-Success",
+  description: "Online ticket booking platform",
+};
 export default async function Success({ searchParams }) {
   const { session_id } = await searchParams;
 
@@ -85,7 +89,7 @@ export default async function Success({ searchParams }) {
           {/* Interactive Routing Call To Actions */}
           <div className="pt-2 space-y-2">
             <Link
-              href="/dashboard/user"
+              href="/"
               className="w-full inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 text-white dark:text-zinc-900 font-bold text-xs uppercase tracking-wider transition-all active:scale-95 cursor-pointer shadow-lg"
             >
               <span>Go to Home</span>

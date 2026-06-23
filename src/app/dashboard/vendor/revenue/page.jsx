@@ -4,6 +4,10 @@ import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import React from 'react';
 
+export const metadata = {
+  title: "TicketBari || Revenue",
+  description: "Online ticket booking platform",
+};
 
 const VendorRevenuePage = async () => {
     const session = await auth.api.getSession({

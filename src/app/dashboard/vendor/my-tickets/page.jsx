@@ -4,6 +4,10 @@ import { getVendorAddedTickets } from '@/lib/api/vendorAddedTickets';
 import MyTicketsClient from '@/Components/Dashboard/Vendor/MyAddTickets/MyTicketsClient';
 import { auth } from '@/lib/auth';
 
+export const metadata = {
+  title: "TicketBari || My-Added-Tickets",
+  description: "Online ticket booking platform",
+};
 
 const MyAddedTickets = async () => {
   const session = await auth.api.getSession({

@@ -3,6 +3,10 @@ import { getAdminAllTickets } from '@/lib/api/adminAllTickets';
 import { ShieldCheck } from 'lucide-react';
 import React from 'react';
 
+export const metadata = {
+  title: "TicketBari || Manage-Tickets",
+  description: "Online ticket booking platform",
+};
 const ManageTicketsPage = async () => {
   const tickets = (await getAdminAllTickets()) || [];
 

@@ -6,6 +6,10 @@ import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import React from 'react';
 
+export const metadata = {
+  title: "TicketBari || Admin-Dashboard-Overview",
+  description: "Online ticket booking platform",
+};
 export default async function AdminDashboardPage() {
     // সেশন সিকিউরিটি চেক
     const session = await auth.api.getSession({ headers: await headers() });

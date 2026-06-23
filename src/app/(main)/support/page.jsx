@@ -4,6 +4,10 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, Mail, MapPin, Headphones, MessageSquare, Send, HelpCircle, ChevronDown } from 'lucide-react';
 
+export const metadata = {
+  title: "TicketBari || Support",
+  description: "Online ticket booking platform",
+};
 const contactMethods = [
   { icon: <Phone className="h-5 w-5 text-[#FF6B35]" />, title: "Call Hotline", value: "+880 1700-000000", sub: "24/7 Instant Transit Expert Line" },
   { icon: <Mail className="h-5 w-5 text-blue-500" />, title: "Email Support", value: "support@ticketbari.com", sub: "Response within 15 Minutes" },
@@ -90,7 +94,7 @@ export default function SupportPage() {
                   <label className="text-[11px] font-bold text-zinc-600 block mb-1.5 uppercase tracking-wide">Full Name</label>
                   <input
                     type="text" required value={form.name} onChange={(e) => setForm({...form, name: e.target.value})}
-                   
+
                     className="w-full bg-zinc-50 border border-zinc-200 text-zinc-950 placeholder-zinc-400 focus:border-[#FF6B35] focus:bg-white rounded-xl px-4 py-3 text-xs sm:text-sm font-semibold outline-none transition-all duration-200"
                     placeholder="e.g. Aritra"
                   />

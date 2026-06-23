@@ -4,6 +4,10 @@ import { getTransactions } from "@/lib/api/userTransaction";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+export const metadata = {
+  title: "TicketBari || User-Dashboard-Overview",
+  description: "Online ticket booking platform",
+};
 
 const UserDashboardPage = async () => {
     const session = await auth.api.getSession({ headers: await headers() });

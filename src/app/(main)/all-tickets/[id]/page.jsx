@@ -4,7 +4,10 @@ import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-
+export const metadata = {
+  title: "TicketBari || Ticket-Details",
+  description: "Online ticket booking platform",
+};
 
 const TicketDetailsPage = async ({ params }) => {
   const { id } = await params;
