@@ -10,6 +10,7 @@ export const metadata = {
   title: "TicketBari- Vendor-Dashboard-Overview",
   description: "Online ticket booking platform",
 };
+export const dynamic = 'force-dynamic';
 export default async function VendorDashBoardPage() {
   // ⚡ Session fetching with proper await for headers
   const session = await auth.api.getSession({ headers: await headers() });
