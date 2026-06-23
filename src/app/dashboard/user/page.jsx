@@ -1,10 +1,25 @@
-import React from 'react';
+import UserDashboardOverview from "@/Components/Dashboard/User/Overview/UserDashboardOverview";
+import { getUserBookedTickets } from "@/lib/api/userBookingTickets";
+import { getTransactions } from "@/lib/api/userTransaction";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
-const UserDashboardPage = () => {
+
+const UserDashboardPage = async () => {
+    const session = await auth.api.getSession({ headers: await headers() });
+    const user = session?.user;
+    const userId = user?.id;
+
+
+    const tickets = await getUserBookedTickets(userId) || [];
+    const transaction = await getTransactions(userId) || [];
+
     return (
-        <div>
-            user
-        </div>
+        <UserDashboardOverview
+          tickets={tickets}
+          transactions={transaction}
+          user={user}
+        />
     );
 };
 

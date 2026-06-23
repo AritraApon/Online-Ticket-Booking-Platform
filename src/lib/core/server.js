@@ -1,68 +1,118 @@
 'use server';
 
-//----------------Post Mutation Handler: ----------------------------
+import { getUserToken } from "../api/session";
+
+export const authHeader = async () => {
+    const token = await getUserToken();
+    return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export const postMutation = async (url, data) => {
-    // Server layer code directly local process variables search
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
 
     try {
+        const authHeadersObj = await authHeader();
+
         const res = await fetch(`${baseUrl}${url}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                ...authHeadersObj
             },
             body: JSON.stringify(data),
-            cache: 'no-store' // Caching bypass validation handling node
+            cache: 'no-store'
         });
 
-        // 🔒 Robust Safety Checklist
         if (!res.ok) {
             const rawText = await res.text();
-            console.error("🔴 Server crash HTML payload parsing logs:", rawText);
+            console.error(rawText);
             return { error: true, status: res.status };
         }
 
         return await res.json();
     } catch (err) {
-        console.error("🛑 Connectivity issue connecting database port pipeline:", err);
+        console.error(err);
         return { error: true, message: "Server connection failed!" };
     }
 };
 
-//----------------Delete Mutation Handler: ----------------------------
-
 export const deleteMutation = async (url) => {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
 
-    const res = await fetch(`${baseUrl}${url}`, {
-        method: "DELETE",
-        cache: "no-store",
-    });
+    try {
+        const authHeadersObj = await authHeader();
 
-    return await res.json();
+        const res = await fetch(`${baseUrl}${url}`, {
+            method: "DELETE",
+            cache: "no-store",
+            headers: {
+                "Content-Type": "application/json",
+                ...authHeadersObj
+            }
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+        }
+
+        return await res.json();
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.message };
+    }
 };
 
-//----------------patch Mutation Handler: ----------------------------
-export const patchMutation = async(url ,data)=>{
+export const patchMutation = async (url, data) => {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
 
-    const res = await fetch(`${baseUrl}${url}`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
+    try {
+        const authHeadersObj = await authHeader();
 
-        },
-        body: JSON.stringify(data),
-         cache: "no-store",
-    });
+        const res = await fetch(`${baseUrl}${url}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                ...authHeadersObj
+            },
+            body: JSON.stringify(data),
+            cache: "no-store"
+        });
 
-    return await res.json();
-}
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+        }
 
+        return await res.json();
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.message };
+    }
+};
 
 export const getMutation = async (url) => {
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
-   const res = await fetch(`${baseUrl}${url}`,{
-       cache: "no-store",});
-   return await res.json();
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
+
+    try {
+        const authHeadersObj = await authHeader();
+
+        const res = await fetch(`${baseUrl}${url}`, {
+            method: "GET",
+            cache: "no-store",
+            headers: {
+                ...authHeadersObj
+            }
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+        }
+
+        return await res.json();
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.message };
+    }
 };
