@@ -57,17 +57,27 @@ if(error){
     // alert(`Credentials secure & ready for authentication route: ${JSON.stringify(payload, null, 2)}`);
   };
 
-  const handleGoogleSignIn =async () => {
+const handleGoogleSignIn = async () => {
+    try {
+     
+      await authClient.signIn.social({
+        provider: "google",
 
-  const data = await authClient.signIn.social({
-    provider: "google",
-  });
-if(data){
-    toast.success('Successfully Login')
-}
-if(error){
-    toast.error(error.message)
-}
+        newUserAdditionalFields: {
+          role: "user",
+          isFraud: false,
+        },
+
+        callbackURL: "/",
+      });
+
+
+      toast.success('Redirecting to Google Sign-In... 🚀');
+
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
+      toast.error(error?.message || "Something went wrong during Google Sign-In");
+    }
   };
 
   // 🎭 Stagger Container Variants for Form Fields
