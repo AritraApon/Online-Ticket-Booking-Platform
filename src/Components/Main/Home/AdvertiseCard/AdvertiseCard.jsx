@@ -18,20 +18,31 @@ export default function AdvertiseCard() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchAdvertiseTickets = async () => {
-      try {
-        const response = await getAdvertiseTickets();
-        const data = response?.tickets || response || [];
-        setTickets(data);
-      } catch (error) {
-        console.error("Error fetching advertised tickets:", error);
-      } finally {
-        setLoading(false);
+ useEffect(() => {
+  const fetchAdvertiseTickets = async () => {
+    try {
+      const response = await getAdvertiseTickets();
+
+      // 🎯 সেফটি চেক: রেসপন্স অবজেক্টের ভেতর যেখানে যেখানে অ্যারে থাকতে পারে তা চেক করা হলো
+      let data = [];
+      if (Array.isArray(response)) {
+        data = response;
+      } else if (response && Array.isArray(response.tickets)) {
+        data = response.tickets;
+      } else if (response && Array.isArray(response.data)) {
+        data = response.data; // অনেক সময় এপিআই রেসপন্স ডিরেক্ট .data তে থাকে
       }
-    };
-    fetchAdvertiseTickets();
-  }, []);
+
+      setTickets(data);
+    } catch (error) {
+      console.error("Error fetching advertised tickets:", error);
+      setTickets([]); // এরর খেলেও যেন স্টেট ফাঁকা অ্যারে থাকে
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchAdvertiseTickets();
+}, []);
 
   // 🗓️ ফরম্যাটেড ডেট জেনারেটর (যেমন: 23 Jun 2026)
   const formatDate = (dateString) => {
