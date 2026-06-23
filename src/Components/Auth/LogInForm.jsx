@@ -59,15 +59,9 @@ if(error){
 
 const handleGoogleSignIn = async () => {
     try {
-     
+
       await authClient.signIn.social({
         provider: "google",
-
-        newUserAdditionalFields: {
-          role: "user",
-          isFraud: false,
-        },
-
         callbackURL: "/",
       });
 

@@ -24,15 +24,17 @@ emailAndPassword: {
         },
     },
 
-  user:{
-    additionalFields:{
-      role:{
-        default : "user"
-      },
-      isFraud: {
-        default: false
-      }
-    }
-  }
+  user: {
+  additionalFields: {
+    role: {
+      type: "string",
+      defaultValue: "user",
+    },
+    isFraud: {
+      type: "boolean",
+      defaultValue: false,
+    },
+  },
+},
 
 });
