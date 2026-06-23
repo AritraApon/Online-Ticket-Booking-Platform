@@ -8,7 +8,8 @@ import {
   User, Ticket, History, PlusCircle,
   Layers, FolderCheck, DollarSign, ShieldAlert,
   Users, Megaphone, LogOut, Menu, X, Train ,LucideHome,
-  Target
+  Target,
+  Download
 } from "lucide-react";
 
 export default function DashboardSidebar() {
@@ -42,6 +43,7 @@ export default function DashboardSidebar() {
       { name: "Overview", path: "/dashboard/user", icon: Target },
       { name: "User Profile", path: "/dashboard/user/profile", icon: User },
       { name: "My Booked Tickets", path: "/dashboard/user/booked-tickets", icon: Ticket },
+      { name: "Download Ticket", path: "/dashboard/user/download-tickets", icon: Download },
       { name: "Transaction History", path: "/dashboard/user/transactions", icon: History },
     ],
     vendor: [
