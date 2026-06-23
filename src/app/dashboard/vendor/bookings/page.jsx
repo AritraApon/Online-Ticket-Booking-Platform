@@ -22,7 +22,7 @@ const RequestedBookingsPage = async () => {
 
   return (
 
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] p-4 md:p-8 text-left transition-colors duration-300">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#000309] p-4 md:p-8 text-left transition-colors duration-300">
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* ==================== 🏆 PREMIUM BRAND HEADER CONTAINER ==================== */}

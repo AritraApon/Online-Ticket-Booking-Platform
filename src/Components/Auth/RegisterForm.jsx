@@ -8,6 +8,7 @@ import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 
 export default function RegisterForm() {
   const [role, setRole] = useState("user");
@@ -21,6 +22,7 @@ export default function RegisterForm() {
     setIsVisible(!isVisible);
   };
 
+  // ImgBB Image Upload Engine (Unchanged)
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -51,6 +53,7 @@ export default function RegisterForm() {
     }
   };
 
+  // Better-Auth Core Registration Pipeline (Unchanged)
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -69,48 +72,42 @@ export default function RegisterForm() {
       isFraud: false,
       createdAt: new Date().toISOString()
     };
-     const { data, error } = await authClient.signUp.email({
+
+    const { data, error } = await authClient.signUp.email({
         email: payload.email,
         password: payload.password,
-        name:payload.name,
+        name: payload.name,
         image: payload.image,
         role: payload.role,
         isFraud: payload.isFraud,
-        callbackURL: "/login" // A URL to redirect to after the user verifies their email (optional)
+        callbackURL: "/login"
+    });
+
+    if(data){
+        toast.success('Successfully Register')
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
     }
-);
-if(data){
-    toast.success('Successfully Register')
-    // toast.success('Successfully Registered! Redirecting... 🎉');
-
-  // 🚀 Simple dynamic layout refresh handler:
-  setTimeout(() => {
-    window.location.href = "/";
-    // router.push use na kore direct href selection runtime routing-ke internal cookies parsing check active korte baddho kore!
-  }, 1000);
-}
-if(error){
-    toast.error(error.message)
-}
-// console.log(data , error)
-
-    // alert(`Payload secure with Framer Motion hooks active: ${JSON.stringify(payload, null, 2)}`);
+    if(error){
+        toast.error(error.message)
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] p-4 sm:p-6 lg:p-8">
-      <div className="grid grid-cols-1 lg:grid-cols-12 w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden border border-zinc-100 min-h-[600px]">
+    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] dark:bg-slate-950 p-4 sm:p-6 lg:p-8 transition-colors duration-200">
+      <div className="grid grid-cols-1 lg:grid-cols-12 w-full max-w-5xl bg-white dark:bg-slate-900 rounded-3xl shadow-xl overflow-hidden border border-zinc-100 dark:border-slate-800/60 min-h-[600px] transition-colors duration-200">
 
         {/* Left Column: Indigo Theme Display Panel */}
-        <div className="lg:col-span-5 bg-[#1E3A8A] p-8 lg:p-12 flex flex-col justify-between text-white relative overflow-hidden">
-          <div className="absolute -top-10 -left-10 w-40 h-40 bg-indigo-800 rounded-full blur-2xl opacity-40"></div>
+        <div className="lg:col-span-5 bg-[#1E3A8A] dark:bg-slate-950 p-8 lg:p-12 flex flex-col justify-between text-white relative overflow-hidden transition-colors duration-200">
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-indigo-800 dark:bg-indigo-900 rounded-full blur-2xl opacity-40"></div>
           <div className="absolute -bottom-10 -right-10 w-52 h-52 bg-[#FF6B35] rounded-full blur-3xl opacity-20"></div>
 
           <div>
             <h2 className="text-3xl font-extrabold tracking-tight">
               Ticket<span className="text-[#FF6B35]">Bari</span>
             </h2>
-            <p className="text-indigo-200 text-sm mt-2">Your Trusted Journey Companion</p>
+            <p className="text-indigo-200 dark:text-indigo-300 text-sm mt-2">Your Trusted Journey Companion</p>
           </div>
 
           <div className="my-8 lg:my-0 space-y-4">
@@ -118,30 +115,32 @@ if(error){
               Secure Your Seats <br />
               In Few Quick Clicks!
             </h3>
-            <p className="text-indigo-100 text-xs leading-relaxed max-w-xs">
+            <p className="text-indigo-100 dark:text-slate-300 text-xs leading-relaxed max-w-xs">
               Join thousands of daily travelers booking Bus, Train, Launch, and Flight tickets without any hassle.
             </p>
           </div>
 
-          <div className="text-xs text-indigo-300">
+          <div className="text-xs text-indigo-300 dark:text-slate-500">
             &copy; 2026 TicketBari. All rights reserved.
           </div>
         </div>
 
         {/* Right Column: Account Form Container Area Layout */}
-        <div className="lg:col-span-7 p-8 lg:p-12 flex flex-col justify-center bg-white">
+        <div className="lg:col-span-7 p-8 lg:p-12 flex flex-col justify-center bg-white dark:bg-slate-900 transition-colors duration-200">
           <div className="mb-6">
-            <h1 className="text-2xl font-extrabold text-zinc-900">Create Account</h1>
-            <p className="text-sm text-zinc-500 mt-1">Get started with your choice of platform role</p>
+            <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-slate-100">Create Account</h1>
+            <p className="text-sm text-zinc-500 dark:text-slate-400 mt-1">Get started with your choice of platform role</p>
           </div>
 
           {/* Selector Segment Toggles */}
-          <div className="grid grid-cols-2 gap-3 p-1.5 bg-zinc-100 rounded-2xl mb-6">
+          <div className="grid grid-cols-2 gap-3 p-1.5 bg-zinc-100 dark:bg-slate-800/60 rounded-2xl mb-6">
             <button
               type="button"
               onClick={() => setRole("user")}
               className={`flex items-center justify-center space-x-2 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                role === "user" ? "bg-white text-[#1E3A8A] shadow-sm" : "text-zinc-600"
+                role === "user"
+                  ? "bg-white dark:bg-slate-700 text-[#1E3A8A] dark:text-white shadow-sm"
+                  : "text-zinc-600 dark:text-slate-400"
               }`}
             >
               <User className="h-4 w-4" />
@@ -151,7 +150,9 @@ if(error){
               type="button"
               onClick={() => setRole("vendor")}
               className={`flex items-center justify-center space-x-2 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                role === "vendor" ? "bg-white text-[#1E3A8A] shadow-sm" : "text-zinc-600"
+                role === "vendor"
+                  ? "bg-white dark:bg-slate-700 text-[#1E3A8A] dark:text-white shadow-sm"
+                  : "text-zinc-600 dark:text-slate-400"
               }`}
             >
               <Briefcase className="h-4 w-4" />
@@ -164,12 +165,12 @@ if(error){
 
             {/* Field 1: Name */}
             <TextField isRequired name="name" type="text" className="flex flex-col gap-1 w-full">
-              <Label className="text-sm font-semibold text-zinc-700">Full Name</Label>
+              <Label className="text-sm font-semibold text-zinc-700 dark:text-slate-300">Full Name</Label>
               <div className="relative flex items-center">
-                <User className="absolute left-3 h-4 w-4 text-zinc-400 pointer-events-none" />
+                <User className="absolute left-3 h-4 w-4 text-zinc-400 dark:text-slate-500 pointer-events-none" />
                 <Input
                   placeholder="Enter your full name"
-                  className="w-full h-11 pl-10 pr-3 rounded-xl border border-zinc-200 focus:border-indigo-500 text-zinc-800 text-sm outline-none transition-colors"
+                  className="w-full h-11 pl-10 pr-3 rounded-xl border border-zinc-200 dark:border-slate-800 bg-transparent focus:border-indigo-500 dark:focus:border-blue-500 text-zinc-800 dark:text-slate-100 text-sm outline-none transition-colors"
                 />
               </div>
               <FieldError className="text-xs text-red-500 mt-0.5" />
@@ -188,12 +189,12 @@ if(error){
                 return null;
               }}
             >
-              <Label className="text-sm font-semibold text-zinc-700">Email Address</Label>
+              <Label className="text-sm font-semibold text-zinc-700 dark:text-slate-300">Email Address</Label>
               <div className="relative flex items-center">
-                <Mail className="absolute left-3 h-4 w-4 text-zinc-400 pointer-events-none" />
+                <Mail className="absolute left-3 h-4 w-4 text-zinc-400 dark:text-slate-500 pointer-events-none" />
                 <Input
                   placeholder="you@example.com"
-                  className="w-full h-11 pl-10 pr-3 rounded-xl border border-zinc-200 focus:border-indigo-500 text-zinc-800 text-sm outline-none transition-colors"
+                  className="w-full h-11 pl-10 pr-3 rounded-xl border border-zinc-200 dark:border-slate-800 bg-transparent focus:border-indigo-500 dark:focus:border-blue-500 text-zinc-800 dark:text-slate-100 text-sm outline-none transition-colors"
                 />
               </div>
               <FieldError className="text-xs text-red-500 mt-0.5" />
@@ -212,19 +213,19 @@ if(error){
                 return null;
               }}
             >
-              <Label className="text-sm font-semibold text-zinc-700">Password</Label>
+              <Label className="text-sm font-semibold text-zinc-700 dark:text-slate-300">Password</Label>
               <div className="relative flex items-center">
-                <Lock className="absolute left-3 h-4 w-4 text-zinc-400 pointer-events-none" />
+                <Lock className="absolute left-3 h-4 w-4 text-zinc-400 dark:text-slate-500 pointer-events-none" />
                 <Input
                   placeholder="Enter secure password"
-                  className="w-full h-11 pl-10 pr-10 rounded-xl border border-zinc-200 focus:border-indigo-500 text-zinc-800 text-sm outline-none transition-colors"
+                  className="w-full h-11 pl-10 pr-10 rounded-xl border border-zinc-200 dark:border-slate-800 bg-transparent focus:border-indigo-500 dark:focus:border-blue-500 text-zinc-800 dark:text-slate-100 text-sm outline-none transition-colors"
                 />
                 <button
                   type="button"
                   onClick={toggleVisibility}
-                  className="absolute right-3 p-1 rounded-full hover:bg-zinc-100 transition-colors focus:outline-none z-20"
+                  className="absolute right-3 p-1 rounded-full hover:bg-zinc-100 dark:hover:bg-slate-800 transition-colors focus:outline-none z-20"
                 >
-                  {isVisible ? <EyeOff className="h-4 w-4 text-zinc-400" /> : <Eye className="h-4 w-4 text-zinc-400" />}
+                  {isVisible ? <EyeOff className="h-4 w-4 text-zinc-400 dark:text-slate-500" /> : <Eye className="h-4 w-4 text-zinc-400 dark:text-slate-500" />}
                 </button>
               </div>
               <FieldError className="text-xs text-red-500 mt-0.5" />
@@ -232,8 +233,8 @@ if(error){
 
             {/* Cloud Upload Block */}
             <div className="flex flex-col gap-1.5 w-full">
-              <label className="text-zinc-700 text-sm font-semibold">Profile Picture</label>
-              <div className="flex items-center space-x-4 border-2 border-dashed border-zinc-200 hover:border-indigo-400 rounded-xl p-3 bg-zinc-50 relative">
+              <label className="text-zinc-700 dark:text-slate-300 text-sm font-semibold">Profile Picture</label>
+              <div className="flex items-center space-x-4 border-2 border-dashed border-zinc-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-blue-500 rounded-xl p-3 bg-zinc-50 dark:bg-slate-950 relative">
                 <input
                   type="file"
                   accept="image/*"
@@ -241,25 +242,25 @@ if(error){
                   className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
                   disabled={isUploading}
                 />
-                <div className="p-2 bg-white rounded-lg border border-zinc-100 shadow-sm">
+                <div className="p-2 bg-white dark:bg-slate-900 rounded-lg border border-zinc-100 dark:border-slate-800 shadow-sm">
                   {isUploading ? (
-                    <Loader2 className="h-5 w-5 text-indigo-600 animate-spin" />
+                    <Loader2 className="h-5 w-5 text-indigo-600 dark:text-blue-500 animate-spin" />
                   ) : (
-                    <Upload className="h-5 w-5 text-zinc-500" />
+                    <Upload className="h-5 w-5 text-zinc-500 dark:text-slate-400" />
                   )}
                 </div>
                 <div className="flex-1 truncate">
                   {isUploading ? (
-                    <span className="text-xs font-semibold text-indigo-600">Uploading to ImgBB...</span>
+                    <span className="text-xs font-semibold text-indigo-600 dark:text-blue-400">Uploading to ImgBB...</span>
                   ) : uploadedImageUrl ? (
-                    <span className="text-xs font-bold text-emerald-600 block">✓ Uploaded Successfully!</span>
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 block">✓ Uploaded Successfully!</span>
                   ) : (
-                    <span className="text-xs text-zinc-500 block">Click to browse photo</span>
+                    <span className="text-xs text-zinc-500 dark:text-slate-400 block">Click to browse photo</span>
                   )}
                 </div>
 
                 {uploadedImageUrl && (
-                  <img
+                  <Image width={20} height={20}
                     src={uploadedImageUrl}
                     alt="Preview avatar"
                     className="w-10 h-10 rounded-full object-cover ring-2 ring-[#FF6B35] z-20"
@@ -273,7 +274,7 @@ if(error){
               <Button
                 type="submit"
                 disabled={isUploading || !uploadedImageUrl}
-                className="w-full bg-[#FF6B35] disabled:bg-zinc-400 text-white font-bold h-11 rounded-xl shadow-md active:scale-[0.98] transition-all"
+                className="w-full bg-[#FF6B35] disabled:bg-zinc-400 dark:disabled:bg-slate-800 disabled:text-zinc-500 text-white font-bold h-11 rounded-xl shadow-md active:scale-[0.98] transition-all"
               >
                 Register as {role === "user" ? "User" : "Vendor"}
               </Button>
@@ -283,7 +284,7 @@ if(error){
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.4 }}
-                className="text-xs text-center text-zinc-500 mt-2"
+                className="text-xs text-center text-zinc-500 dark:text-slate-400 mt-2"
               >
                 Already have an account?{" "}
                 <motion.span
@@ -291,7 +292,7 @@ if(error){
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Link href="/login" className="text-[#1E3A8A] font-bold hover:underline">
+                  <Link href="/login" className="text-[#1E3A8A] dark:text-blue-400 font-bold hover:underline">
                     Sign In
                   </Link>
                 </motion.span>

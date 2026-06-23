@@ -25,7 +25,7 @@ export default async function VendorDashBoardPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8 text-[#1E293B]">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#000001] p-4 md:p-8 text-[#0e5ad5]">
       <VendorDashboardClient
         user={user}
         tickets={addTickets}

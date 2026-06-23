@@ -9,20 +9,23 @@ import {
   Layers, FolderCheck, DollarSign, ShieldAlert,
   Users, Megaphone, LogOut, Menu, X, Train ,LucideHome,
   Target,
-  Download
+  Download,
+  Sun,
+  Moon
 } from "lucide-react";
 
 export default function DashboardSidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false); // 🌓 লোকাল থিম স্টেট কন্ট্রোলার
   const pathname = usePathname();
   const router = useRouter();
 
-  // Better-Auth Core Hook Context
+  // Better-Auth Core Hook Context (Unchanged)
   const { data: session } = authClient.useSession();
   const user = session?.user;
-  const currentRole = user?.role || "user"; // Fallback 'user' role checking wrapper
+  const currentRole = user?.role || "user";
 
-  // Asynchronous Clear Session Core Signout Handler
+  // Asynchronous Clear Session Core Signout Handler (Unchanged)
   const handleLogout = async () => {
     try {
       await authClient.signOut({
@@ -37,7 +40,7 @@ export default function DashboardSidebar() {
     }
   };
 
-  // 📝 Dynamic Role Matrix Mapping Array configurations
+  // Dynamic Role Matrix Mapping Array configurations (Unchanged)
   const roleRoutes = {
     user: [
       { name: "Overview", path: "/dashboard/user", icon: Target },
@@ -47,7 +50,7 @@ export default function DashboardSidebar() {
       { name: "Transaction History", path: "/dashboard/user/transactions", icon: History },
     ],
     vendor: [
-        { name: "Overview", path: "/dashboard/vendor", icon: Target },
+      { name: "Overview", path: "/dashboard/vendor", icon: Target },
       { name: "Vendor Profile", path: "/dashboard/vendor/vendor-profile", icon: User },
       { name: "Add Ticket", path: "/dashboard/vendor/add-ticket", icon: PlusCircle },
       { name: "My Added Tickets", path: "/dashboard/vendor/my-tickets", icon: Layers },
@@ -63,14 +66,23 @@ export default function DashboardSidebar() {
     ]
   };
 
-  // Safe mapping derived parameters safely based on context roles
   const activeLinks = roleRoutes[currentRole] || roleRoutes["user"];
-
   const isActive = (path) => pathname === path;
+
+  // 🔄 গ্লোবাল DOM ক্লাস টগল মেকানিজম
+  const toggleTheme = () => {
+    const nextMode = !isDarkMode;
+    setIsDarkMode(nextMode);
+    if (nextMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   return (
     <>
-      {/* Mobile Top Navigation Trigger Controller (Only visible on screens below MD) */}
+      {/* Mobile Top Navigation Trigger Controller */}
       <div className="flex items-center justify-between bg-[#1E3A8A] text-white px-4 h-16 md:hidden border-b border-indigo-900/40 sticky top-0 z-40">
         <Link href="/" className="flex items-center space-x-2 text-xl font-bold tracking-tight">
           <span className="p-1.5 bg-[#FF6B35] rounded-lg">
@@ -105,7 +117,6 @@ export default function DashboardSidebar() {
                 Ticket<span className="text-[#FF6B35]">Bari</span>
               </span>
             </Link>
-            {/* Close Mobile Drawer Trigger element screen tracking toggle panel */}
             <button onClick={() => setIsOpen(false)} className="md:hidden text-indigo-200 hover:text-white">
               <X className="h-5 w-5" />
             </button>
@@ -113,16 +124,27 @@ export default function DashboardSidebar() {
 
           {/* User Meta Identity Badge Context Group */}
           <div className="px-4 py-4 border-b border-indigo-900/30 bg-indigo-900/20">
-            <div className="flex items-center space-x-3">
-              <div className="h-9 w-9 rounded-full bg-[#6435ff] flex items-center justify-center font-bold text-sm text-white border border-orange-400/30 uppercase">
-                {user?.name ? user.name.slice(0, 2) : "US"}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3 truncate">
+                <div className="h-9 w-9 rounded-full bg-[#6435ff] flex items-center justify-center font-bold text-sm text-white border border-orange-400/30 uppercase shrink-0">
+                  {user?.name ? user.name.slice(0, 2) : "US"}
+                </div>
+                <div className="truncate">
+                  <p className="text-sm font-semibold truncate text-indigo-50">{user?.name || "Dashboard User"}</p>
+                  <span className="inline-block text-[10px] uppercase font-extrabold tracking-wider bg-orange-500/20 text-[#FF6B35] px-2 py-0.5 rounded-md mt-0.5">
+                    {currentRole} Mode
+                  </span>
+                </div>
               </div>
-              <div className="truncate">
-                <p className="text-sm font-semibold truncate text-indigo-50">{user?.name || "Dashboard User"}</p>
-                <span className="inline-block text-[10px] uppercase font-extrabold tracking-wider bg-orange-500/20 text-[#FF6B35] px-2 py-0.5 rounded-md mt-0.5">
-                  {currentRole} Mode
-                </span>
-              </div>
+
+              {/* 🌓 টগল বাটন ইন্টারফেস */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 bg-indigo-900/50 hover:bg-indigo-900/80 text-indigo-200 hover:text-orange-400 rounded-xl border border-indigo-800/40 transition-all shrink-0 ml-2"
+                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              >
+                {isDarkMode ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4" />}
+              </button>
             </div>
           </div>
 
@@ -150,7 +172,6 @@ export default function DashboardSidebar() {
             })}
           </nav>
         </div>
-
 
         {/* Bottom Section Block: Global Signout Control Core Anchor */}
         <div className="p-4 border-t border-indigo-900/30 bg-indigo-950/20">

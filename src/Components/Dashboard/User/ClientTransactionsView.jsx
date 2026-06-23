@@ -6,7 +6,7 @@ import { ArrowUpRight, Calendar, CreditCard, Ticket } from 'lucide-react';
 
 export default function ClientTransactionsView({ transactions }) {
 
-    // 📈 ১. Recharts এর জন্য ডেটা ফরম্যাটিং (তারিখ অনুযায়ী সাজানো)
+    // 📈 ১. Recharts এর জন্য ডেটা ফরম্যাটিং (তারিখ অনুযায়ী সাজানো) (Unchanged)
     const chartData = [...transactions]
         .reverse() // ওল্ড থেকে নিউ ক্রনোলজিতে সাজানোর জন্য
         .map(t => ({
@@ -15,7 +15,7 @@ export default function ClientTransactionsView({ transactions }) {
             title: t.ticketTitle
         }));
 
-    // কাস্টম টুলটিপ যাতে চার্টের ওপরে হোভার করলে সুন্দর দেখায়
+    // কাস্টম টুলটিপ যাতে চার্টের ওপরে হোভার করলে সুন্দর দেখায়
     const CustomTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {
             return (
@@ -39,15 +39,15 @@ export default function ClientTransactionsView({ transactions }) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {/* 🔥 নতুন আল্ট্রা-প্রিমিয়াম এবং মডার্ন চার্ট বক্স */}
-                <div className="lg:col-span-2 bg-white border border-slate-200/70 p-6 rounded-[32px] shadow-sm flex flex-col justify-between h-[340px] transition-all hover:shadow-md">
+                <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/80 p-6 rounded-[32px] shadow-sm flex flex-col justify-between h-[340px] transition-all hover:shadow-md duration-200">
                     <div className="flex items-center justify-between mb-4">
                         <div>
                             <span className="text-[10px] font-black text-[#FF6B35] uppercase tracking-widest block mb-0.5">Financial Metrics</span>
-                            <span className="text-lg font-black text-[#1E293B] tracking-tight">Payment Velocity Stream</span>
+                            <span className="text-lg font-black text-[#1E293B] dark:text-slate-100 tracking-tight">Payment Velocity Stream</span>
                         </div>
-                        <div className="flex items-center space-x-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
+                        <div className="flex items-center space-x-2 bg-slate-50 dark:bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-100 dark:border-slate-900 transition-colors">
                             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Live Pipeline</span>
+                            <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Live Pipeline</span>
                         </div>
                     </div>
 
@@ -56,15 +56,15 @@ export default function ClientTransactionsView({ transactions }) {
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                                 <defs>
-                                    {/* আইস-ব্লু প্রিমিয়াম সফট গ্রেডিয়েন্ট */}
+                                    {/* আইস-ব্লু প্রিমিয়াম সফট গ্রেডিয়েন্ট (ডার্ক মোডে আরেকটু ভিজিবল করা হয়েছে) */}
                                     <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#1E3A8A" stopOpacity={0.25} />
-                                        <stop offset="95%" stopColor="#1E3A8A" stopOpacity={0.00} />
+                                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.25} />
+                                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.00} />
                                     </linearGradient>
                                 </defs>
 
-                                {/* সূক্ষ্ম মিনিমাল ড্যাশড গ্রিডলাইন */}
-                                <CartesianGrid strokeDasharray="4 4" stroke="#E2E8F0" strokeOpacity={0.6} vertical={false} />
+                                {/* সূক্ষ্ম মিনিমাল ড্যাশড গ্রিডলাইন - ডার্ক মোডেও ম্যাচিং করা হয়েছে */}
+                                <CartesianGrid strokeDasharray="4 4" stroke="currentColor" className="text-slate-200 dark:text-slate-800" strokeOpacity={0.6} vertical={false} />
 
                                 <XAxis
                                     dataKey="date"
@@ -85,15 +85,14 @@ export default function ClientTransactionsView({ transactions }) {
                                     dx={5}
                                 />
 
-
                                 <Tooltip
                                     content={CustomTooltip}
-                                    cursor={{ stroke: '#1E3A8A', strokeWidth: 1, strokeDasharray: '4 4' }}
+                                    cursor={{ stroke: '#3B82F6', strokeWidth: 1, strokeDasharray: '4 4' }}
                                 />
                                 <Area
                                     type="monotone"
                                     dataKey="amount"
-                                    stroke="#1E3A8A"
+                                    stroke="#3B82F6"
                                     strokeWidth={3}
                                     fillOpacity={1}
                                     fill="url(#colorAmount)"
@@ -101,7 +100,7 @@ export default function ClientTransactionsView({ transactions }) {
                                         r: 6,
                                         stroke: '#FFF',
                                         strokeWidth: 2,
-                                        fill: '#1E3A8A',
+                                        fill: '#3B82F6',
                                         className: 'shadow-lg'
                                     }}
                                 />
@@ -111,8 +110,8 @@ export default function ClientTransactionsView({ transactions }) {
                 </div>
 
                 {/* Quick Summary Node Stats */}
-                <div className="bg-slate-900 border border-slate-800 p-6 rounded-[32px] text-white flex flex-col justify-between shadow-xl relative overflow-hidden group h-[340px]">
-                    <div className="absolute -right-6 -bottom-6 text-slate-800/30 group-hover:scale-110 transition-transform duration-500 pointer-events-none">
+                <div className="bg-slate-900 dark:bg-slate-950 border border-slate-800 dark:border-slate-900 p-6 rounded-[32px] text-white flex flex-col justify-between shadow-xl relative overflow-hidden group h-[340px] transition-colors duration-200">
+                    <div className="absolute -right-6 -bottom-6 text-slate-800/30 dark:text-slate-900/40 group-hover:scale-110 transition-transform duration-500 pointer-events-none">
                         <CreditCard className="h-48 w-48 stroke-[1]" />
                     </div>
 
@@ -137,71 +136,71 @@ export default function ClientTransactionsView({ transactions }) {
             </div>
 
             {/* 📋 TRANSACTION TABLE FORMAT SECTION */}
-            <div className="bg-white border border-slate-200/80 rounded-[24px] shadow-sm overflow-hidden">
-                <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-                    <h3 className="text-base font-black text-[#1E293B]">Historical Settlement Records</h3>
-                    <span className="text-[10px] font-black text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-[24px] shadow-sm overflow-hidden transition-colors duration-200">
+                <div className="p-5 border-b border-slate-100 dark:border-slate-800/60 flex items-center justify-between">
+                    <h3 className="text-base font-black text-[#1E293B] dark:text-slate-200">Historical Settlement Records</h3>
+                    <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-950 px-2.5 py-1 rounded-lg transition-colors">
                         {transactions.length} LOGS
                     </span>
                 </div>
 
                 {transactions.length === 0 ? (
-                    <div className="p-12 text-center text-slate-400 text-sm font-medium">
+                    <div className="p-12 text-center text-slate-400 dark:text-slate-500 text-sm font-medium">
                         No secure payment records mapped to this Node ID.
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-slate-50 text-[11px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                                <tr className="bg-slate-50 dark:bg-slate-950/60 text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800/60 transition-colors">
                                     <th className="py-4 px-6">Ticket Title</th>
                                     <th className="py-4 px-6">Transaction ID</th>
                                     <th className="py-4 px-6">Payment Date</th>
                                     <th className="py-4 px-6 text-right">Amount</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100 text-xs text-slate-600 font-semibold">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-xs text-slate-600 dark:text-slate-400 font-semibold transition-colors">
                                 {transactions.map((t) => {
                                     const dateObj = new Date(t.paymentDate);
                                     const formattedDate = dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
                                     const formattedTime = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
                                     return (
-                                        <tr key={t._id} className="hover:bg-slate-50/80 transition-colors group">
+                                        <tr key={t._id} className="hover:bg-slate-50/80 dark:hover:bg-slate-950/40 transition-colors group">
                                             <td className="py-4 px-6">
                                                 <div className="flex items-center space-x-3">
-                                                    <div className="h-8 w-8 rounded-xl bg-slate-100 text-[#1E3A8A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                                    <div className="h-8 w-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-[#1E3A8A] dark:text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all">
                                                         <Ticket className="h-4 w-4" />
                                                     </div>
                                                     <div>
-                                                        <span className="font-black text-[#1E293B] block text-sm">{t.ticketTitle}</span>
-                                                        <span className="text-[10px] text-slate-400 font-medium">Qty mapped securely</span>
+                                                        <span className="font-black text-[#1E293B] dark:text-slate-200 block text-sm">{t.ticketTitle}</span>
+                                                        <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Qty mapped securely</span>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="py-4 px-6 font-mono text-slate-400 text-[11px]">
+                                            <td className="py-4 px-6 font-mono text-slate-400 dark:text-slate-500 text-[11px]">
                                                 <div className="flex items-center space-x-1">
-                                                    <span className="text-[#1E3A8A] font-bold">stripe</span>
+                                                    <span className="text-[#1E3A8A] dark:text-blue-400 font-bold">stripe</span>
                                                     <span>•</span>
                                                     <span>{t.transactionId}</span>
                                                 </div>
                                             </td>
                                             <td className="py-4 px-6">
                                                 <div className="flex items-center space-x-2">
-                                                    <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                                                    <Calendar className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
                                                     <div>
-                                                        <span className="block text-[#1E3A8A] font-bold">{formattedDate}</span>
-                                                        <span className="text-[10px] text-slate-400 block font-medium">{formattedTime}</span>
+                                                        <span className="block text-[#1E3A8A] dark:text-blue-400 font-bold">{formattedDate}</span>
+                                                        <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-medium">{formattedTime}</span>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="py-4 px-6 text-right">
                                                 <div className="inline-flex flex-col items-end">
-                                                    <span className="text-sm font-black text-[#1E293B] flex items-center">
+                                                    <span className="text-sm font-black text-[#1E293B] dark:text-slate-200 flex items-center">
                                                         ৳{t.amount.toLocaleString()}
                                                         <ArrowUpRight className="h-3 w-3 text-emerald-500 ml-0.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                                                     </span>
-                                                    <span className="text-[9px] font-black uppercase text-emerald-500 tracking-wider bg-emerald-50 px-1.5 py-0.5 rounded-md mt-0.5">
+                                                    <span className="text-[9px] font-black uppercase text-emerald-500 tracking-wider bg-emerald-50 dark:bg-emerald-950/50 px-1.5 py-0.5 rounded-md mt-0.5">
                                                         Success
                                                     </span>
                                                 </div>

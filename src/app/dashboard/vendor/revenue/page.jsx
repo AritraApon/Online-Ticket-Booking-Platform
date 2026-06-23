@@ -17,7 +17,7 @@ const VendorRevenuePage = async () => {
     const vendor = session?.user;
     const vendorId = vendor?.id;
 
-    // এপিআই থেকে অবজেক্ট নিয়ে আসা
+    // এপিআই থেকে অবজেক্ট নিয়ে আসা
     const vendorRevenue = await getVendorRevenue(vendorId) || {
         totalTicketsAdded: 0,
         totalTicketsSold: 0,
@@ -26,15 +26,16 @@ const VendorRevenuePage = async () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50/50 p-4 md:p-8 text-left">
+        /* ==================== 🌑 NEO-DARK CONTAINER ==================== */
+        <div className="min-h-screen bg-slate-50/50 dark:bg-zinc-950 p-4 md:p-8 text-left selection:bg-zinc-800 selection:text-white">
             <div className="max-w-6xl mx-auto space-y-8">
 
                 {/* Dashboard Header */}
-                <div>
-                    <h1 className="text-2xl md:text-3xl font-black text-[#1E293B] tracking-tight">
+                <div className="space-y-1">
+                    <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
                         Vendor Revenue Hub
                     </h1>
-                    <p className="text-xs md:text-sm text-slate-400 font-medium">
+                    <p className="text-xs md:text-sm text-zinc-500 font-medium">
                         Track your ticket inventory pipeline, sales performance, and systemic payout structures.
                     </p>
                 </div>

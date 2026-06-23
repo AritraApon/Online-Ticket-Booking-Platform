@@ -18,7 +18,7 @@ const ManageUserPage = async () => {
   const users = await getAllUsers() || [];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] p-4 md:p-8 text-left transition-colors duration-300">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#000000] p-4 md:p-8 text-left transition-colors duration-300">
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* ==================== 🏆 MODERN PREMIUM HEADER ==================== */}

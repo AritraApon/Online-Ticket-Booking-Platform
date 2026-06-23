@@ -6,6 +6,8 @@ import { Calendar, Clock, ArrowRight, ShieldCheck, MapPin, Sparkles, AlertTriang
 import { useRouter } from 'next/navigation';
 import BookingModal from './BookingModal';
 import { authClient } from '@/lib/auth-client';
+import Image from 'next/image';
+
 
 export default function TicketDetailsClient({ ticket }) {
   const router = useRouter();
@@ -50,7 +52,7 @@ export default function TicketDetailsClient({ ticket }) {
   const isExpired = timeLeft.passed;
   const isOutOfStock = (ticket.quantity || 0) <= 0;
 
-  // ⚡ Role-Based Check Constraints (এখানে ফিক্স করা হয়েছে মামা)
+  // ⚡ Role-Based Check Constraints
   const isPassenger = user?.role === 'user';
   const isStaffOrVendor = user?.role === 'vendor' || user?.role === 'admin';
 
@@ -58,18 +60,18 @@ export default function TicketDetailsClient({ ticket }) {
   const isBookingDisabled = isExpired || isOutOfStock || !user || !isPassenger;
 
   return (
-    <div className="space-y-6 text-left selection:bg-[#FF6B35]/20">
+    <div className="space-y-6 text-left selection:bg-[#FF6B35]/20 text-zinc-900 dark:text-slate-200">
 
       {/* Top Action Bar with Back Button */}
       <div className="flex items-center justify-between pb-2">
         <button
           onClick={() => router.back()}
-          className="group flex items-center space-x-2 px-4 py-2 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-bold text-zinc-600 transition-all shadow-sm"
+          className="group flex items-center space-x-2 px-4 py-2 bg-white dark:bg-slate-900 hover:bg-zinc-50 dark:hover:bg-slate-800/80 border border-zinc-200 dark:border-slate-800 rounded-xl text-xs font-bold text-zinc-600 dark:text-slate-400 transition-all shadow-sm"
         >
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1 text-[#1E3A8A]" />
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1 text-[#1E3A8A] dark:text-indigo-400" />
           <span>Back to Fleet</span>
         </button>
-        <span className="text-[11px] font-black tracking-widest uppercase bg-[#1E3A8A]/5 text-[#1E3A8A] px-3 py-1.5 rounded-lg border border-[#1E3A8A]/10">
+        <span className="text-[11px] font-black tracking-widest uppercase bg-[#1E3A8A]/5 dark:bg-indigo-950/40 text-[#1E3A8A] dark:text-indigo-400 px-3 py-1.5 rounded-lg border border-[#1E3A8A]/10 dark:border-indigo-900/50">
           Ticket Management Console
         </span>
       </div>
@@ -84,10 +86,10 @@ export default function TicketDetailsClient({ ticket }) {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white p-2.5 rounded-2xl border border-zinc-200/80 shadow-sm overflow-hidden relative group"
+            className="bg-white dark:bg-slate-900 p-2.5 rounded-2xl border border-zinc-200/80 dark:border-slate-800 shadow-sm overflow-hidden relative group"
           >
-            <div className="relative h-48 sm:h-56 w-full rounded-xl overflow-hidden bg-zinc-50">
-              <img
+            <div className="relative h-48 sm:h-56 w-full rounded-xl overflow-hidden bg-zinc-50 dark:bg-slate-950">
+              <Image width={500} height={500}
                 src={ticket.image || "https://i.ibb.co.com/rfcHK5ym/image.png"}
                 alt={ticket.title}
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
@@ -103,9 +105,9 @@ export default function TicketDetailsClient({ ticket }) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className="bg-white border-2 border-zinc-900 p-5 rounded-3xl shadow-[5px_5px_0px_0px_#1E3A8A] space-y-4 relative overflow-hidden"
+            className="bg-white dark:bg-slate-900 border-2 border-zinc-900 dark:border-slate-700 p-5 rounded-3xl shadow-[5px_5px_0px_0px_#1E3A8A] dark:shadow-[5px_5px_0px_0px_#312E81] space-y-4 relative overflow-hidden"
           >
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-2.5">
+            <div className="flex items-center justify-between border-b border-zinc-100 dark:border-slate-800 pb-2.5">
               <span className="text-[10px] font-black uppercase tracking-widest text-[#FF6B35]">
                 Live Reservation
               </span>
@@ -115,10 +117,10 @@ export default function TicketDetailsClient({ ticket }) {
             {/* Countdown Box */}
             <div className={`p-4 rounded-xl border transition-all text-center ${
               isExpired
-                ? "bg-red-50 border-red-200 text-red-600"
-                : "bg-zinc-900 border-zinc-950 text-white shadow-md"
+                ? "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400"
+                : "bg-zinc-900 dark:bg-slate-950 border-zinc-950 dark:border-slate-900 text-white shadow-md"
             }`}>
-              <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 block mb-0.5">Gateway Countdown</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 dark:text-slate-500 block mb-0.5">Gateway Countdown</span>
               <p className="text-base font-black tracking-wider font-mono text-[#FF6B35]">
                 {timeLeft.text}
               </p>
@@ -126,15 +128,15 @@ export default function TicketDetailsClient({ ticket }) {
 
             {/* Stock and Price Mini Grid */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-zinc-50 p-3 rounded-xl border border-zinc-200 text-center">
-                <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-bold block mb-0.5">Available</span>
-                <span className={`text-sm font-black ${isOutOfStock ? "text-red-500" : "text-[#1E3A8A]"}`}>
+              <div className="bg-zinc-50 dark:bg-slate-800/40 p-3 rounded-xl border border-zinc-200 dark:border-slate-800/80 text-center">
+                <span className="text-[9px] text-zinc-400 dark:text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Available</span>
+                <span className={`text-sm font-black ${isOutOfStock ? "text-red-500" : "text-[#1E3A8A] dark:text-indigo-400"}`}>
                   {ticket.quantity || 0} Seats
                 </span>
               </div>
-              <div className="bg-zinc-50 p-3 rounded-xl border border-zinc-200 text-center">
-                <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-bold block mb-0.5">Fare</span>
-                <span className="text-sm font-black text-zinc-800">
+              <div className="bg-zinc-50 dark:bg-slate-800/40 p-3 rounded-xl border border-zinc-200 dark:border-slate-800/80 text-center">
+                <span className="text-[9px] text-zinc-400 dark:text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Fare</span>
+                <span className="text-sm font-black text-zinc-800 dark:text-slate-200">
                   ৳{ticket.pricePerUnit}
                 </span>
               </div>
@@ -143,7 +145,7 @@ export default function TicketDetailsClient({ ticket }) {
             {/* 🛑 DYNAMIC WARNING MESSAGES */}
             {/* ১. সময় বা স্টক শেষ হলে ওয়ার্নিং */}
             {(isExpired || isOutOfStock) && (
-              <div className="flex items-center space-x-2 text-[11px] font-bold text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200/60">
+              <div className="flex items-center space-x-2 text-[11px] font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 p-2.5 rounded-xl border border-red-200/60 dark:border-red-900/40">
                 <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                 <span>{isExpired ? "Departure schedule has passed." : "Sold out!"}</span>
               </div>
@@ -151,8 +153,8 @@ export default function TicketDetailsClient({ ticket }) {
 
             {/* ২. ইউজার যদি ভেন্ডর বা এডমিন হয় তাহলে রেস্ট্রিকশন নোটিশ */}
             {isStaffOrVendor && !(isExpired || isOutOfStock) && (
-              <div className="flex items-start space-x-2 text-[11px] font-bold text-amber-700 bg-amber-50 p-2.5 rounded-xl border border-amber-200/60">
-                <Lock className="h-3.5 w-3.5 shrink-0 mt-0.5 text-amber-600" />
+              <div className="flex items-start space-x-2 text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 p-2.5 rounded-xl border border-amber-200/60 dark:border-amber-900/40">
+                <Lock className="h-3.5 w-3.5 shrink-0 mt-0.5 text-amber-600 dark:text-amber-500" />
                 <span>
                   Booking restricted! Admins and Vendors are not permitted to reserve passenger tickets.
                 </span>
@@ -161,7 +163,7 @@ export default function TicketDetailsClient({ ticket }) {
 
             {/* ৩. কোনো ইউজার যদি লগইন অবস্থায় না থাকে তার জন্য নোটিশ */}
             {!user && (
-              <div className="flex items-center space-x-2 text-[11px] font-bold text-zinc-500 bg-zinc-50 p-2.5 rounded-xl border border-zinc-200">
+              <div className="flex items-center space-x-2 text-[11px] font-bold text-zinc-500 dark:text-slate-400 bg-zinc-50 dark:bg-slate-800/30 p-2.5 rounded-xl border border-zinc-200 dark:border-slate-800">
                 <Lock className="h-3.5 w-3.5 shrink-0" />
                 <span>Please log in as a passenger to purchase tickets.</span>
               </div>
@@ -173,7 +175,7 @@ export default function TicketDetailsClient({ ticket }) {
               whileTap={!isBookingDisabled ? { scale: 0.98 } : {}}
               onClick={() => setIsModalOpen(true)}
               disabled={isBookingDisabled}
-              className="w-full flex items-center justify-center space-x-2 py-3.5 bg-[#1E3A8A] text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm hover:bg-[#122554] disabled:opacity-45 disabled:bg-zinc-200 disabled:text-zinc-400 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center space-x-2 py-3.5 bg-[#1E3A8A] text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm hover:bg-[#122554] disabled:opacity-45 disabled:bg-zinc-200 dark:disabled:bg-slate-800 disabled:text-zinc-400 dark:disabled:text-slate-600 disabled:cursor-not-allowed"
             >
               <ShieldCheck className="h-4 w-4 text-[#FF6B35]" />
               <span>
@@ -189,40 +191,40 @@ export default function TicketDetailsClient({ ticket }) {
           initial={{ opacity: 0, x: 15 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
-          className="lg:col-span-7 bg-white border border-zinc-200 p-6 sm:p-8 rounded-3xl shadow-sm space-y-6"
+          className="lg:col-span-7 bg-white dark:bg-slate-900 border border-zinc-200 dark:border-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm space-y-6"
         >
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1">Fleet Designation</span>
-            <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 tracking-tight leading-tight">
+            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 dark:text-slate-500 block mb-1">Fleet Designation</span>
+            <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white tracking-tight leading-tight">
               {ticket.title}
             </h1>
           </div>
 
           {/* Route Network Vector Card */}
           <div className="space-y-2.5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block pl-0.5">Route Network Blueprint</span>
-            <div className="grid grid-cols-1 md:grid-cols-7 items-center gap-3 bg-zinc-50 p-4 border border-zinc-200 rounded-xl">
+            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 dark:text-slate-500 block pl-0.5">Route Network Blueprint</span>
+            <div className="grid grid-cols-1 md:grid-cols-7 items-center gap-3 bg-zinc-50 dark:bg-slate-950/50 p-4 border border-zinc-200 dark:border-slate-800 rounded-xl">
               <div className="md:col-span-3 flex items-center space-x-3">
-                <div className="p-2 bg-white rounded-lg border border-zinc-200">
+                <div className="p-2 bg-white dark:bg-slate-900 rounded-lg border border-zinc-200 dark:border-slate-800">
                   <MapPin className="h-4 w-4 text-zinc-400" />
                 </div>
                 <div>
-                  <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-bold block">Origin</span>
-                  <span className="text-sm font-extrabold text-zinc-800">{ticket.from}</span>
+                  <span className="text-[9px] text-zinc-400 dark:text-slate-500 uppercase tracking-widest font-bold block">Origin</span>
+                  <span className="text-sm font-extrabold text-zinc-800 dark:text-slate-200">{ticket.from}</span>
                 </div>
               </div>
               <div className="hidden md:flex md:col-span-1 justify-center">
-                <div className="h-8 w-8 rounded-full bg-white border border-zinc-200 flex items-center justify-center shadow-sm">
+                <div className="h-8 w-8 rounded-full bg-white dark:bg-slate-900 border border-zinc-200 dark:border-slate-800 flex items-center justify-center shadow-sm">
                   <ArrowRight className="h-3.5 w-3.5 text-[#FF6B35]" />
                 </div>
               </div>
               <div className="md:col-span-3 flex gap-2 items-center space-x-3 md:justify-end md:text-right">
-                <div className="md:order-2 p-2 bg-[#1E3A8A]/5 rounded-lg border border-[#1E3A8A]/10">
-                  <MapPin className="h-4 w-4 text-[#1E3A8A]" />
+                <div className="md:order-2 p-2 bg-[#1E3A8A]/5 dark:bg-indigo-950/30 rounded-lg border border-[#1E3A8A]/10 dark:border-indigo-900/50">
+                  <MapPin className="h-4 w-4 text-[#1E3A8A] dark:text-indigo-400" />
                 </div>
                 <div className="md:order-1">
-                  <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-bold block">Destination Terminal</span>
-                  <span className="text-sm font-extrabold text-[#1E3A8A]">{ticket.to}</span>
+                  <span className="text-[9px] text-zinc-400 dark:text-slate-500 uppercase tracking-widest font-bold block">Destination Terminal</span>
+                  <span className="text-sm font-extrabold text-[#1E3A8A] dark:text-indigo-400">{ticket.to}</span>
                 </div>
               </div>
             </div>
@@ -230,22 +232,22 @@ export default function TicketDetailsClient({ ticket }) {
 
           {/* Logistics Dynamic Dates Info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center space-x-3.5 p-3.5 rounded-xl border border-zinc-200 bg-white shadow-sm">
-              <div className="p-2.5 bg-blue-50 text-[#1E3A8A] rounded-lg">
+            <div className="flex items-center space-x-3.5 p-3.5 rounded-xl border border-zinc-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+              <div className="p-2.5 bg-blue-50 dark:bg-blue-950/40 text-[#1E3A8A] dark:text-indigo-400 rounded-lg">
                 <Calendar className="h-4 w-4" />
               </div>
               <div>
-                <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-bold block">Departure Date</span>
-                <span className="text-xs font-black text-zinc-800">{formattedDate}</span>
+                <span className="text-[9px] text-zinc-400 dark:text-slate-500 uppercase tracking-widest font-bold block">Departure Date</span>
+                <span className="text-xs font-black text-zinc-800 dark:text-slate-200">{formattedDate}</span>
               </div>
             </div>
-            <div className="flex items-center space-x-3.5 p-3.5 rounded-xl border border-zinc-200 bg-white shadow-sm">
-              <div className="p-2.5 bg-orange-50 text-[#FF6B35] rounded-lg">
+            <div className="flex items-center space-x-3.5 p-3.5 rounded-xl border border-zinc-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+              <div className="p-2.5 bg-orange-50 dark:bg-orange-950/20 text-[#FF6B35] rounded-lg">
                 <Clock className="h-4 w-4" />
               </div>
               <div>
-                <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-bold block">Departure Time</span>
-                <span className="text-xs font-black text-zinc-800">{formattedTime}</span>
+                <span className="text-[9px] text-zinc-400 dark:text-slate-500 uppercase tracking-widest font-bold block">Departure Time</span>
+                <span className="text-xs font-black text-zinc-800 dark:text-slate-200">{formattedTime}</span>
               </div>
             </div>
           </div>
@@ -253,10 +255,10 @@ export default function TicketDetailsClient({ ticket }) {
           {/* Perks Row Block */}
           {ticket.perks && ticket.perks.length > 0 && (
             <div className="space-y-2 pt-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block pl-0.5">Premium Included Perks</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 dark:text-slate-500 block pl-0.5">Premium Included Perks</span>
               <div className="flex flex-wrap gap-2">
                 {ticket.perks.map((perk, idx) => (
-                  <div key={idx} className="flex items-center space-x-1.5 text-xs font-bold px-3 py-2 bg-white text-zinc-700 border border-zinc-200 rounded-lg shadow-sm">
+                  <div key={idx} className="flex items-center space-x-1.5 text-xs font-bold px-3 py-2 bg-white dark:bg-slate-900 text-zinc-700 dark:text-slate-300 border border-zinc-200 dark:border-slate-800 rounded-lg shadow-sm">
                     <Sparkles className="h-3.5 w-3.5 text-[#FF6B35]" />
                     <span>{perk}</span>
                   </div>

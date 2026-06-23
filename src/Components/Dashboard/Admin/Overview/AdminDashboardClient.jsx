@@ -78,7 +78,7 @@ export default function AdminDashboardClient({ tickets = [], allUsers = [], adve
 
   return (
     <>
-      <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] p-4 sm:p-6 lg:p-8 text-[#1E293B] dark:text-[#E2E8F0] transition-colors duration-300">
+      <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#000000] p-4 sm:p-6 lg:p-8 text-[#1E293B] dark:text-[#E2E8F0] transition-colors duration-300">
         <div className="max-w-7xl mx-auto space-y-10">
 
           {/* 🌟 ড্যাশবোর্ড হেডার */}

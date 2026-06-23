@@ -31,11 +31,11 @@ export default function SearchCard() {
   ];
 
   return (
-    <div className="w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-zinc-100 p-6 lg:p-8 text-zinc-800">
+    <div className="w-full max-w-4xl bg-white/95 dark:bg-slate-900/90 backdrop-blur-md rounded-3xl shadow-2xl border border-zinc-100 dark:border-slate-800/60 p-6 lg:p-8 text-zinc-800 dark:text-slate-100 transition-colors duration-200">
       <form onSubmit={handleSearch} className="flex flex-col gap-6">
 
         {/* 🎛️ যানবাহন সিলেকশন ট্যাব গ্রুপ */}
-        <div className="flex flex-wrap gap-2 border-b border-zinc-100 pb-4">
+        <div className="flex flex-wrap gap-2 border-b border-zinc-100 dark:border-slate-800/60 pb-4">
           {transportTypes.map((type) => (
             <button
               key={type.key}
@@ -43,8 +43,8 @@ export default function SearchCard() {
               onClick={() => setTransport(type.key)}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
                 transport === type.key
-                  ? "bg-[#1E3A8A] text-white shadow-md shadow-blue-900/20"
-                  : "bg-zinc-50 hover:bg-zinc-100 text-zinc-600"
+                  ? "bg-[#1E3A8A] dark:bg-blue-600 text-white shadow-md shadow-blue-900/20"
+                  : "bg-zinc-50 dark:bg-slate-800 hover:bg-zinc-100 dark:hover:bg-slate-700/80 text-zinc-600 dark:text-slate-300"
               }`}
             >
               {type.label}
@@ -57,30 +57,30 @@ export default function SearchCard() {
 
           {/* From Location */}
           <div className="md:col-span-4 relative flex flex-col gap-1 w-full">
-            <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider pl-1">From</label>
+            <label className="text-xs font-bold text-zinc-500 dark:text-slate-400 uppercase tracking-wider pl-1">From</label>
             <div className="relative flex items-center">
-              <MapPin className="absolute left-3 h-4 w-4 text-zinc-400 z-10" />
+              <MapPin className="absolute left-3 h-4 w-4 text-zinc-400 dark:text-slate-500 z-10" />
               <Input
                 name="from"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
                 placeholder="Where from?"
-                className="w-full h-12 pl-8 pr-3 rounded-xl border border-zinc-200 bg-zinc-50 focus:border-indigo-500 text-sm outline-none transition-colors"
+                className="w-full h-12 pl-8 pr-3 rounded-xl border border-zinc-200 dark:border-slate-800 bg-zinc-50 dark:bg-slate-950 text-zinc-800 dark:text-slate-100 text-sm outline-none transition-colors focus:border-indigo-500 dark:focus:border-blue-500"
               />
             </div>
           </div>
 
           {/* To Location */}
           <div className="md:col-span-4 relative flex flex-col gap-1 w-full">
-            <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider pl-1">To</label>
+            <label className="text-xs font-bold text-zinc-500 dark:text-slate-400 uppercase tracking-wider pl-1">To</label>
             <div className="relative flex items-center">
-              <Navigation className="absolute left-3 h-4 w-4 text-zinc-400 z-10" />
+              <Navigation className="absolute left-3 h-4 w-4 text-zinc-400 dark:text-slate-500 z-10" />
               <Input
                 name="to"
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
                 placeholder="Where to?"
-                className="w-full h-12 pl-8 pr-3 rounded-xl border border-zinc-200 bg-zinc-50 focus:border-indigo-500 text-sm outline-none transition-colors"
+                className="w-full h-12 pl-8 pr-3 rounded-xl border border-zinc-200 dark:border-slate-800 bg-zinc-50 dark:bg-slate-950 text-zinc-800 dark:text-slate-100 text-sm outline-none transition-colors focus:border-indigo-500 dark:focus:border-blue-500"
               />
             </div>
           </div>
@@ -89,7 +89,7 @@ export default function SearchCard() {
           <div className="md:col-span-4 w-full">
             <Button
               type="submit"
-              className="w-full h-12 bg-[#FF6B35] hover:bg-[#e05626] text-white font-extrabold rounded-xl shadow-lg shadow-orange-600/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+              className="w-full h-12 bg-[#FF6B35] hover:bg-[#e05626] text-white font-extrabold rounded-xl shadow-lg shadow-orange-600/20 dark:shadow-orange-900/10 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
             >
               <Bus className="h-5 w-5" />
               Find Best Tickets
