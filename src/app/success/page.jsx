@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { stripe } from '../../lib/stripe';
 import Link from 'next/link';
-import { CheckCircle, Calendar, Mail, ArrowRight } from 'lucide-react';
+import { CheckCircle, Calendar, Mail, ArrowRight, Download } from 'lucide-react';
 import { patchMutation } from '@/lib/core/server';
 
 // 🎯 নোট: যদি আপনার ডাটাবেজ কানেকশনের কোনো ফাংশন থাকে (যেমন bookingsCollection), তবে সেটি এখানে ইম্পোর্ট করবেন
@@ -11,6 +11,7 @@ export const metadata = {
   title: "TicketBari || Payment-Success",
   description: "Online ticket booking platform",
 };
+
 export default async function Success({ searchParams }) {
   const { session_id } = await searchParams;
 
@@ -36,13 +37,13 @@ export default async function Success({ searchParams }) {
     // এই `bookingId` এর স্ট্যাটাস 'paid' বা 'approved' করে দিতে হবে।
     if (bookingId) {
       try {
-       await patchMutation(`/api/booking/payment-success/${bookingId}`, {
-         transactionId: session.payment_intent?.id || session_id,
-         amount: amount_total / 100
-       });
-     } catch (dbError) {
-       console.error("Database status sync failed:", dbError);
-     }
+        await patchMutation(`/api/booking/payment-success/${bookingId}`, {
+          transactionId: session.payment_intent?.id || session_id,
+          amount: amount_total / 100
+        });
+      } catch (dbError) {
+        console.error("Database status sync failed:", dbError);
+      }
     }
 
     return (
@@ -86,18 +87,32 @@ export default async function Success({ searchParams }) {
             <span className="font-bold text-zinc-900 dark:text-white">{customerEmail}</span>.
           </p>
 
-          {/* Interactive Routing Call To Actions */}
-          <div className="pt-2 space-y-2">
-            <Link
-              href="/"
-              className="w-full inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 text-white dark:text-zinc-900 font-bold text-xs uppercase tracking-wider transition-all active:scale-95 cursor-pointer shadow-lg"
-            >
-              <span>Go to Home</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+          {/* Interactive Routing Call To Actions (Two Buttons Grid) */}
+          <div className="pt-2 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
-            <p className="text-[10px] text-zinc-400 font-medium">
-              Need help? Contact <a href="mailto:orders@example.com" className="underline hover:text-zinc-600">orders@example.com</a>
+              {/* Button 1: Download Tickets Page */}
+              <Link
+                href="/dashboard/user/download-tickets"
+                className="inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider transition-all active:scale-95 cursor-pointer shadow-md"
+              >
+                <Download className="h-3.5 w-3.5" />
+                <span>Download Tickets Page</span>
+              </Link>
+
+              {/* Button 2: Go to Home */}
+              <Link
+                href="/"
+                className="inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 text-white dark:text-zinc-900 font-bold text-xs uppercase tracking-wider transition-all active:scale-95 cursor-pointer shadow-md"
+              >
+                <span>Go to Home</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+
+            </div>
+
+            <p className="text-[10px] text-zinc-400 font-medium pt-1">
+              Need help? Contact <a href="mailto:orders@example.com" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">orders@example.com</a>
             </p>
           </div>
 
